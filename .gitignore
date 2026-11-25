@@ -1,0 +1,35 @@
+# Môi trường Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Môi trường Node
+node_modules/
+dist/
+build/
+
+# Mật khẩu, khóa bí mật (tuyệt đối không đưa lên)
+.env
+.env.*
+*.key
+*.pem
+secrets.*
+
+# Dữ liệu và cơ sở dữ liệu (có thể chứa thông tin bệnh nhân)
+*.sqlite3
+*.db
+*.bak
+data/
+uploads/
+backups/
+
+# Log và file tạm
+*.log
+*.tmp
+
+# File của hệ điều hành và trình soạn thảo
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
