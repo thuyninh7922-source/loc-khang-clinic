@@ -1,0 +1,25 @@
+{
+  "name": "lockhang-clinic",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Website phòng khám Lộc Khang với PostgreSQL, đăng nhập phiên an toàn và cổng quản trị.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "db:migrate": "node scripts/migrate.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "connect-pg-simple": "10.0.0",
+    "dotenv": "16.4.7",
+    "express": "4.22.3",
+    "express-rate-limit": "7.5.0",
+    "express-session": "1.19.0",
+    "helmet": "8.1.0",
+    "pg": "8.16.3"
+  }
+}
