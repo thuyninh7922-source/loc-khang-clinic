@@ -1,0 +1,107 @@
+.page-main { min-height: calc(100vh - 200px); padding: 70px 0 100px; background: var(--cream); }
+.page-hero { display:flex; justify-content:space-between; align-items:end; gap:30px; margin-bottom:38px; }
+.page-kicker { color:var(--teal); text-transform:uppercase; letter-spacing:.18em; font-size:10px; font-weight:800; }
+.page-hero h1 { max-width:720px; margin:14px 0 0; font:700 clamp(36px,5vw,62px)/1.04 "Plus Jakarta Sans",sans-serif; letter-spacing:-.07em; }
+.page-hero h1 em { color:var(--teal); font-style:normal; }
+.page-hero p { max-width:470px; margin:15px 0 0; color:var(--ink-soft); font-size:14px; }
+.page-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.ghost-button { display:inline-flex; align-items:center; gap:12px; padding:12px 16px; color:var(--teal); border:1px solid var(--line); border-radius:999px; background:var(--white); font-size:12px; font-weight:700; }
+.portal-grid { display:grid; grid-template-columns:250px 1fr; gap:23px; align-items:start; }
+.portal-side { padding:17px; border:1px solid var(--line); border-radius:20px; background:var(--white); }
+.portal-side-title { padding:4px 10px 15px; color:#91a49e; text-transform:uppercase; letter-spacing:.14em; font-size:9px; font-weight:800; }
+.portal-nav { display:grid; gap:4px; }
+.portal-nav a { padding:12px 11px; color:var(--ink-soft); border-radius:10px; font-size:12px; font-weight:600; }
+.portal-nav a:hover, .portal-nav a.active { color:var(--teal); background:var(--mint-soft); }
+.portal-content { display:grid; gap:20px; }
+.panel { padding:25px; border:1px solid var(--line); border-radius:20px; background:var(--white); }
+.panel-heading { display:flex; justify-content:space-between; align-items:start; gap:15px; margin-bottom:20px; }
+.panel-heading h2 { margin:0; font-size:23px; }
+.panel-heading p { margin:5px 0 0; color:var(--ink-soft); font-size:11px; }
+.stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.stat-card { padding:18px; border:1px solid var(--line); border-radius:15px; background:var(--mint-soft); }
+.stat-card strong { display:block; color:var(--teal); font:700 27px "Plus Jakarta Sans",sans-serif; letter-spacing:-.06em; }
+.stat-card span { display:block; margin-top:4px; color:var(--ink-soft); font-size:10px; }
+.data-table { width:100%; border-collapse:collapse; font-size:12px; }
+.data-table th { padding:10px 8px; color:#91a49e; text-align:left; text-transform:uppercase; letter-spacing:.12em; font-size:9px; border-bottom:1px solid var(--line); }
+.data-table td { padding:15px 8px; border-bottom:1px solid #edf2ef; vertical-align:top; }
+.data-table tr:last-child td { border-bottom:0; }
+.status-pill { display:inline-flex; padding:5px 9px; border-radius:999px; color:#5f7b69; background:#e2f2e1; font-size:9px; font-weight:800; }
+.status-pill.pending { color:#886b3b; background:#fff0c9; }
+.status-pill.cancelled { color:#9a5d5d; background:#fae0df; }
+.empty-state { padding:32px 15px; color:var(--ink-soft); text-align:center; font-size:12px; }
+.booking-layout { display:grid; grid-template-columns:1fr .72fr; gap:24px; align-items:start; }
+.booking-card { padding:34px; border-radius:24px; background:var(--white); box-shadow:var(--shadow); }
+.booking-card h2 { margin:0 0 23px; font-size:28px; }
+.booking-form .form-row { gap:15px; }
+.booking-side { padding:28px; color:var(--white); border-radius:24px; background:var(--teal); }
+.booking-side h2 { margin:0 0 15px; font-size:27px; }
+.booking-side p { color:#b4d2ca; font-size:13px; }
+.booking-check { display:flex; gap:11px; margin-top:21px; align-items:start; }
+.booking-check span { display:grid; place-items:center; width:24px; height:24px; flex-shrink:0; color:var(--teal); border-radius:50%; background:var(--lime); font-size:12px; }
+.booking-check strong { display:block; font-size:12px; } .booking-check small { display:block; margin-top:3px; color:#a4c8bd; font-size:10px; }
+.search-row { display:flex; gap:10px; margin-bottom:21px; } .search-row input { margin:0; background:var(--white); } .search-row select { margin:0; max-width:190px; background:var(--white); }
+.disease-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; }
+.disease-card { position:relative; min-height:220px; padding:22px; border:1px solid var(--line); border-radius:18px; background:var(--white); transition:transform .2s,box-shadow .2s; }
+.disease-card:hover { transform:translateY(-4px); box-shadow:var(--shadow); } .disease-card .service-icon { margin-bottom:25px; }
+.disease-card h3 { margin:0 0 9px; font-size:18px; } .disease-card p { margin:0; color:var(--ink-soft); font-size:11px; }
+.disease-card a { position:absolute; bottom:20px; left:22px; color:var(--teal); font-size:11px; font-weight:800; }
+.doctor-directory { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.doctor-directory .profile-card { border:1px solid var(--line); }
+.doctor-directory .profile-meta h3 { font-size:16px; }
+.login-layout { display:grid; grid-template-columns:1fr .85fr; gap:25px; align-items:stretch; }
+.login-card { padding:40px; border:1px solid var(--line); border-radius:24px; background:var(--white); box-shadow:var(--shadow); }
+.login-card h1 { margin:10px 0 10px; font:700 32px "Plus Jakarta Sans",sans-serif; letter-spacing:-.07em; }
+.login-card > p { margin:0 0 25px; color:var(--ink-soft); font-size:13px; }
+.login-visual { position:relative; min-height:440px; overflow:hidden; padding:35px; color:var(--white); border-radius:24px; background:var(--teal); }
+.login-visual h2 { position:relative; z-index:2; max-width:330px; margin:0; font-size:39px; } .login-visual h2 em { color:var(--lime); }
+.login-visual p { position:relative; z-index:2; max-width:290px; color:#b9d4cd; font-size:13px; }
+.login-orbit { position:absolute; width:420px; height:420px; right:-120px; bottom:-140px; border:1px solid rgba(217,236,123,.55); border-radius:50%; box-shadow:0 0 0 47px rgba(217,236,123,.1),0 0 0 95px rgba(217,236,123,.06); }
+.login-benefits { position:absolute; z-index:2; left:35px; right:35px; bottom:32px; display:grid; gap:10px; } .login-benefits span { display:flex; align-items:center; gap:9px; color:#c3ded5; font-size:11px; } .login-benefits i { display:grid; place-items:center; width:22px; height:22px; color:var(--teal); border-radius:50%; background:var(--lime); font-style:normal; font-size:11px; }
+.small-note { margin-top:13px; color:#8b9e98; text-align:center; font-size:10px; }
+.demo-note { margin-top:12px; padding:10px; color:#68817a; border-radius:9px; background:var(--mint-soft); text-align:center; font-size:10px; line-height:1.6; }
+.auth-error { min-height:18px; margin:0 0 8px; color:#a45353; font-size:11px; font-weight:700; }
+@media (max-width:850px) { .portal-grid,.booking-layout,.login-layout { grid-template-columns:1fr; } .portal-side { position:static; } .portal-nav { grid-template-columns:repeat(3,1fr); } .portal-side-title { grid-column:1/-1; } .stat-grid { grid-template-columns:repeat(2,1fr); } .disease-grid,.doctor-directory { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:600px) { .page-main { padding:50px 0 70px; } .page-hero { display:block; } .page-actions { margin-top:22px; } .portal-nav { grid-template-columns:1fr 1fr; } .panel,.booking-card,.login-card { padding:22px 17px; } .stat-card strong { font-size:23px; } .data-table { display:block; overflow:auto; white-space:nowrap; } .disease-grid,.doctor-directory { grid-template-columns:1fr; } .search-row { display:grid; grid-template-columns:1fr; } .search-row select { max-width:none; } .login-visual { min-height:330px; } .login-visual h2 { font-size:31px; } }
+
+
+/* Bộ chọn cơ sở và bản đồ chi nhánh mẫu */
+.location-picker { margin: 2px 0 19px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #f4f8f5; }
+.location-picker-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; color:var(--ink); font-size:12px; }
+.location-picker-heading a { color:var(--teal); font-size:10px; font-weight:800; }
+.location-picker-controls { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:end; }
+.location-picker label { margin-bottom:11px; }
+.location-gps-button { min-height:41px; margin:0 0 11px; padding:9px 13px; color:var(--teal); border:1px solid #c6d9d1; border-radius:9px; background:#fff; font-size:10px; font-weight:800; }
+.location-gps-button:hover:not(:disabled) { background:var(--mint); }
+.location-gps-button:disabled { cursor:wait; opacity:.65; }
+.location-picker select:disabled { color:#758782; }
+.location-recommendation { min-height:38px; padding:10px 11px; color:#536f68; border-radius:9px; background:#e8f1ed; font-size:10px; line-height:1.5; }
+.location-sample-disclaimer { margin:8px 0 0; color:#87684b; font-size:9px; }
+.location-suggestion-copy { display:grid; gap:3px; }
+.location-suggestion-label { color:#6d857e; font-size:9px; }
+.location-suggestion-copy strong { color:var(--teal); font-size:12px; }
+.location-suggestion-copy small { font-size:9px; }
+.location-select-nearest { justify-self:start; margin-top:5px; padding:6px 10px; color:#fff; border:0; border-radius:999px; background:var(--teal); font-size:9px; font-weight:800; }
+.location-selected-note { font-weight:700; }
+.location-warning { margin:0 0 24px; padding:16px 19px; color:#755a31; border:1px solid #ead8a8; border-radius:13px; background:#fff7df; font-size:12px; }
+.locations-layout { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr); gap:20px; align-items:start; }
+.vietnam-map-panel,.location-list-panel { padding:20px; border:1px solid var(--line); border-radius:20px; background:#fff; }
+.map-panel-heading { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:15px; color:var(--ink-soft); font-size:10px; }
+.vietnam-map { position:relative; width:100%; min-height:540px; overflow:hidden; border-radius:15px; background:linear-gradient(145deg,#f1f7f3,#e7f0eb); }
+.vietnam-map img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:13px; }
+.location-map-marker { position:absolute; z-index:2; display:grid; place-items:center; width:30px; height:30px; padding:0; transform:translate(-50%,-50%); color:#fff; border:2px solid #fff; border-radius:50%; background:var(--teal); box-shadow:0 3px 12px #0b5b5a55; font-size:10px; font-weight:800; }
+.location-map-marker:hover { z-index:3; transform:translate(-50%,-50%) scale(1.15); background:#083f40; }
+.map-attribution { margin:11px 0 0; color:#71837d; font-size:9px; }
+.map-attribution a { color:var(--teal); text-decoration:underline; }
+.location-list { display:grid; gap:10px; max-height:630px; overflow:auto; }
+.location-card { padding:14px; border:1px solid #e5ece7; border-radius:13px; background:#fbfcfa; scroll-margin:12px; transition:border-color .2s,background .2s; }
+.location-card.is-active { border-color:var(--teal); background:#f0f7f3; }
+.location-card-number { color:#81958d; font-size:9px; font-weight:800; letter-spacing:.12em; }
+.location-card h3 { margin:4px 0; font-size:15px; }
+.location-card-city,.location-card-address { margin:3px 0; color:var(--ink-soft); font-size:10px; }
+.location-sample-tag { display:inline-block; margin-top:6px; padding:4px 7px; color:#795c32; border-radius:999px; background:#fff0c9; font-size:8px; font-weight:800; }
+.location-card-actions { display:flex; align-items:center; flex-wrap:wrap; gap:9px; margin-top:12px; }
+.location-card-actions .button { padding:8px 12px; gap:5px; font-size:9px; }
+.location-map-link { padding:6px 0; color:var(--teal); border:0; background:transparent; font-size:9px; font-weight:800; }
+@media (max-width:850px) { .locations-layout { grid-template-columns:1fr; } .vietnam-map { min-height:460px; } .location-list { max-height:none; } }
+@media (max-width:600px) { .location-picker { padding:13px; } .location-picker-controls { grid-template-columns:1fr; gap:0; } .location-gps-button { width:100%; margin:0 0 11px; } .location-picker-heading { align-items:flex-start; flex-direction:column; gap:4px; } .vietnam-map-panel,.location-list-panel { padding:14px; } .vietnam-map { min-height:360px; } .location-map-marker { width:26px; height:26px; } }
+.appointment-form .location-picker { color:var(--ink); }
