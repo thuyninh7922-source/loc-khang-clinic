@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Đặt lịch khám tại cơ sở Lộc Khang phù hợp. Bạn có thể tự chọn tỉnh/thành hoặc chủ động dùng GPS để gợi ý điểm gần nhất.">
+  <meta name="theme-color" content="#0b5b5a">
+  <title>Đặt lịch khám — Lộc Khang Clinic</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/pages.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="announcement"><div class="container announcement-inner"><span class="announcement-dot"></span><span>Khám ngoài giờ đến 20:00 mỗi ngày</span><a href="tel:19006868">Hotline <strong>1900 6868</strong></a></div></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="/" aria-label="Lộc Khang Clinic - Trang chủ"><span class="brand-mark"><span></span><i></i></span><span><strong>Lộc Khang</strong><small>CLINIC</small></span></a>
+      <nav class="main-nav" aria-label="Điều hướng chính"><a href="/">Trang chủ</a><a href="/diseases">Tra cứu bệnh lý</a><a href="/doctors">Đội ngũ</a><a href="/locations">Cơ sở mẫu</a><a class="active" href="/booking">Đặt lịch khám</a></nav>
+      <a class="nav-cta" href="/login"><span>Cổng người bệnh</span><b>↗</b></a>
+    </div>
+  </header>
+  <main class="page-main">
+    <div class="container">
+      <div class="page-hero">
+        <div><span class="page-kicker">Lịch hẹn của bạn</span><h1>Đặt lịch khám<br><em>theo cách nhẹ nhàng.</em></h1><p>Chọn bác sĩ, chuyên khoa, cơ sở và thời gian phù hợp. Điều phối viên sẽ gọi lại xác nhận lịch hẹn.</p></div>
+        <div class="page-actions"><a class="ghost-button" href="/doctors">Xem đội ngũ bác sĩ ↗</a></div>
+      </div>
+      <div class="booking-layout">
+        <div class="booking-card">
+          <form id="portal-booking-form" class="booking-form">
+            <div class="form-heading"><div><span class="mini-label">Đặt lịch trực tuyến</span><h3>Bắt đầu từ hôm nay</h3></div><span class="form-badge">Miễn phí</span></div>
+            <div class="form-row"><label>Họ và tên <input name="fullName" autocomplete="name" placeholder="Nguyễn Văn An" required></label><label>Số điện thoại <input name="phone" type="tel" autocomplete="tel" pattern="[0-9+ ()-]{9,}" placeholder="090 123 4567" required></label></div>
+            <div class="location-picker" data-location-picker>
+              <div class="location-picker-heading"><strong>Cơ sở khám</strong><a href="/locations">Xem bản đồ các điểm mẫu ↗</a></div>
+              <div class="location-picker-controls">
+                <label>Chọn tỉnh/thành thủ công <select data-location-city aria-label="Chọn tỉnh thành để gợi ý cơ sở gần nhất"><option value="">Đang tải tỉnh/thành…</option></select></label>
+                <button class="location-gps-button" type="button" data-location-gps>◎ Dùng vị trí hiện tại</button>
+              </div>
+              <label>Chọn cơ sở <select name="locationId" data-location-select required disabled><option value="">Đang tải danh sách cơ sở…</option></select></label>
+              <div class="location-recommendation" data-location-recommendation role="status" aria-live="polite">Bạn có thể tự chọn tỉnh/thành. Chỉ khi bấm nút định vị, trình duyệt mới hỏi quyền GPS; tọa độ chỉ dùng trên thiết bị của bạn.</div>
+              <p class="location-sample-disclaimer">Các cơ sở hiện là dữ liệu minh họa, địa chỉ và hoạt động chưa được xác nhận.</p>
+            </div>
+            <div class="form-row"><label>Chuyên khoa <select name="specialty" required><option value="">Chọn chuyên khoa</option><option>Nội tổng quát</option><option>Tim mạch</option><option>Nhi khoa</option><option>Sản phụ khoa</option><option>Cơ xương khớp</option><option>Da liễu</option></select></label><label>Bác sĩ mong muốn <select name="doctor" required><option value="">Chọn bác sĩ</option><option>BS. Nguyễn Minh An</option><option>BS. Trần Hoài Thương</option><option>PGS.TS. Lê Quang Vũ</option></select></label></div>
+            <div class="form-row"><label>Ngày khám <input name="date" type="date" required></label><label>Khung giờ <select name="time" required><option value="">Chọn khung giờ</option><option>07:30 — 09:00</option><option>09:00 — 11:00</option><option>13:30 — 15:30</option><option>15:30 — 20:00</option></select></label></div>
+            <label>Ghi chú thêm <textarea name="note" rows="4" placeholder="Triệu chứng hoặc điều bạn muốn chia sẻ..."></textarea></label>
+            <button class="button button-dark button-full" type="submit">Gửi yêu cầu đặt lịch <span>→</span></button>
+            <p class="form-note">Thông tin của bạn được bảo mật và chỉ dùng để điều phối lịch hẹn.</p>
+          </form>
+        </div>
+        <aside class="booking-side"><span class="eyebrow light"><span class="eyebrow-line"></span> Lộc Khang Clinic</span><h2>Đúng chuyên khoa.<br>Đúng thời điểm.</h2><p>Chúng tôi giúp bạn tiết kiệm thời gian để tập trung vào điều quan trọng nhất: sức khỏe.</p><div class="booking-check"><span>✓</span><div><strong>Xác nhận lịch hẹn</strong><small>Điều phối viên liên hệ qua số điện thoại bạn cung cấp</small></div></div><div class="booking-check"><span>✓</span><div><strong>Chọn cơ sở thuận tiện</strong><small>Gợi ý dựa trên GPS sau khi bạn cho phép hoặc tỉnh/thành tự chọn</small></div></div><div class="booking-check"><span>✓</span><div><strong>Địa điểm mẫu</strong><small>Vui lòng xác minh địa chỉ trước khi đến khám</small></div></div></aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="container footer-bottom"><span>© 2026 Lộc Khang Clinic</span><span>1900 6868 · hello@lockhang.clinic</span></div></footer>
+  <script src="/pages.js"></script>
+  <script src="/location-utils.js"></script>
+  <script src="/locations.js"></script>
+</body>
+</html>

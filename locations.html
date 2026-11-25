@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Xem các vị trí phòng khám Lộc Khang mẫu trên bản đồ Việt Nam. Địa chỉ minh họa, chưa xác nhận.">
+  <meta name="theme-color" content="#0b5b5a">
+  <title>Các vị trí mẫu — Lộc Khang Clinic</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="announcement"><div class="container announcement-inner"><span class="announcement-dot"></span><span>Địa điểm mẫu — chưa xác nhận</span><a href="/booking">Đặt lịch khám ↗</a></div></div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="/" aria-label="Lộc Khang Clinic - Trang chủ"><span class="brand-mark"><span></span><i></i></span><span><strong>Lộc Khang</strong><small>CLINIC</small></span></a>
+      <nav class="main-nav" aria-label="Điều hướng chính"><a href="/">Trang chủ</a><a href="/diseases">Tra cứu bệnh lý</a><a href="/doctors">Đội ngũ</a><a class="active" href="/locations">Cơ sở mẫu</a><a href="/booking">Đặt lịch khám</a></nav>
+      <a class="nav-cta" href="/booking"><span>Đặt lịch khám</span><b>↗</b></a>
+    </div>
+  </header>
+  <main class="page-main locations-page">
+    <div class="container">
+      <div class="page-hero">
+        <div><span class="page-kicker">Mạng lưới minh họa · 7 vị trí</span><h1>Các điểm mẫu<br><em>trên bản đồ Việt Nam.</em></h1><p>Đây là dữ liệu minh họa để xem thử chức năng tìm cơ sở gần nhất. Địa chỉ và hoạt động của các chi nhánh chưa được xác nhận.</p></div>
+        <div class="page-actions"><a class="button button-primary" href="/booking">Chọn cơ sở khi đặt lịch <span>→</span></a></div>
+      </div>
+      <div class="location-warning" role="note"><strong>Lưu ý:</strong> Các vị trí, tên cơ sở và địa chỉ đang hiển thị chỉ là dữ liệu mẫu. Vui lòng thay bằng thông tin thật đã xác nhận trước khi công khai website cho bệnh nhân.</div>
+      <section class="locations-layout" aria-label="Bản đồ và danh sách vị trí mẫu">
+        <div class="vietnam-map-panel">
+          <div class="map-panel-heading"><span class="mini-label">Vị trí gần đúng</span><span>Chọn số để xem chi tiết</span></div>
+          <div class="vietnam-map" data-vietnam-map>
+            <img src="/assets/vietnam-map.svg" alt="Bản đồ Việt Nam với bảy điểm cơ sở mẫu được đánh dấu">
+          </div>
+          <p class="map-attribution">Bản đồ: <a href="https://simplemaps.com/resources/svg-vietnam" target="_blank" rel="noreferrer">SimpleMaps</a> · Giấy phép: <a href="https://simplemaps.com/resources/svg-license" target="_blank" rel="noreferrer">Free for Commercial Use</a>.</p>
+        </div>
+        <div class="location-list-panel">
+          <div class="map-panel-heading"><span class="mini-label">Danh sách cơ sở</span><span>7 vị trí mẫu</span></div>
+          <div class="location-list" data-location-list><p class="empty-state">Đang tải danh sách địa điểm…</p></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="container footer-bottom"><span>© 2025 Lộc Khang Clinic</span><span>Dữ liệu địa điểm minh họa, chưa xác nhận</span></div></footer>
+  <script src="/pages.js"></script>
+  <script src="/location-utils.js"></script>
+  <script src="locations.js"></script>
+</body>
+</html>
