@@ -1,0 +1,5 @@
+ALTER TABLE clinic_appointments
+  ADD COLUMN IF NOT EXISTS location_id VARCHAR(64),
+  ADD COLUMN IF NOT EXISTS location_name VARCHAR(120),
+  ADD COLUMN IF NOT EXISTS location_city VARCHAR(100),
+  ADD COLUMN IF NOT EXISTS location_address VARCHAR(240);
