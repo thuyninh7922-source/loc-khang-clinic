@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="vi">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Đăng ký bệnh nhân — Lộc Khang Clinic</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="pages.css"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"></head>
+<body>
+<header class="site-header"><div class="container nav-wrap"><a class="brand" href="/"><span class="brand-mark"><span></span><i></i></span><span><strong>Lộc Khang</strong><small>CLINIC</small></span></a><a class="text-link" href="/login">Đã có tài khoản? Đăng nhập ↗</a></div></header>
+<main class="page-main"><div class="container login-layout">
+  <section class="login-card"><span class="page-kicker">Tài khoản bệnh nhân</span><h1>Đăng ký<br>chăm sóc chủ động.</h1><p>Tạo tài khoản để quản lý lịch hẹn, nhận tư vấn và lưu thông tin liên hệ thuận tiện hơn.</p>
+    <form id="patient-register-form"><div class="form-row"><label>Họ và tên <input name="fullName" autocomplete="name" minlength="2" maxlength="120" placeholder="Nguyễn Văn An" required></label><label>Số điện thoại <input name="phone" type="tel" autocomplete="tel" pattern="[0-9+ ()-]{9,30}" placeholder="090 123 4567" required></label></div>
+      <label>Email <input name="email" type="email" autocomplete="email" maxlength="254" placeholder="ban@example.com" required></label>
+      <div class="form-row"><label>Mật khẩu <input name="password" type="password" autocomplete="new-password" minlength="10" maxlength="128" placeholder="Tối thiểu 10 ký tự" required></label><label>Nhập lại mật khẩu <input name="confirmPassword" type="password" autocomplete="new-password" minlength="10" maxlength="128" placeholder="Nhập lại mật khẩu" required></label></div>
+      <div class="auth-error" id="register-error" aria-live="polite"></div><button class="button button-dark button-full" type="submit">Tạo tài khoản bệnh nhân <span>→</span></button><p class="small-note">Tài khoản này dành cho bệnh nhân. Nhân sự phòng khám vui lòng sử dụng <a class="text-link" href="/admin-login">cổng quản trị viên</a>.</p>
+    </form>
+  </section>
+  <aside class="login-visual"><span class="eyebrow light"><span class="eyebrow-line"></span> Patient care</span><h2>Một tài khoản,<br>nhiều <em>an tâm.</em></h2><p>Lưu lại lịch hẹn và kết nối với đội ngũ Lộc Khang bất cứ khi nào bạn cần.</p><div class="login-orbit"></div><div class="login-benefits"><span><i>✓</i> Theo dõi lịch hẹn của bạn</span><span><i>✓</i> Đặt lịch nhanh hơn lần sau</span><span><i>✓</i> Thông tin được tách riêng theo tài khoản</span></div></aside>
+</div></main>
+<footer class="site-footer"><div class="container footer-bottom"><span>© 2026 Lộc Khang Clinic</span><span>Dành cho bệnh nhân</span></div></footer>
+<script src="pages.js"></script>
+</body>
+</html>
