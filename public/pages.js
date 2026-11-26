@@ -161,6 +161,9 @@ function formatMoney(value) {
 function paymentMethodLabel(method) {
   return ({ cash: 'Tại quầy', transfer: 'Chuyển khoản' })[method] || '—';
 }
+function serviceTierLabel(tier) {
+  return tier === 'premium' ? 'Cao cấp (GS/PGS/TS)' : 'Thường (Bình dân)';
+}
 function paymentStateLabel(item) {
   if (item.total_vnd === null || item.total_vnd === undefined) return '—';
   if (Number(item.total_vnd) === 0) return 'Miễn phí';
@@ -175,7 +178,7 @@ function paymentCell(item, withActions) {
   const total = document.createElement('strong');
   total.textContent = formatMoney(item.total_vnd);
   const meta = document.createElement('small');
-  meta.textContent = `${paymentMethodLabel(item.payment_method)}${item.is_first_visit ? ' · Khám lần đầu' : ''}`;
+  meta.textContent = `${serviceTierLabel(item.service_tier)} · ${paymentMethodLabel(item.payment_method)}${item.is_first_visit ? ' · Khám lần đầu' : ''}`;
   const settled = Number(item.total_vnd) === 0 || item.payment_status === 'paid';
   const pill = document.createElement('span');
   pill.className = `status-pill${settled ? '' : ' pending'}`;
@@ -215,6 +218,7 @@ async function initServicePicker(form) {
   if (!box) return;
   const offerBox = form.querySelector('#first-visit-offer');
   const estimate = form.querySelector('#service-estimate');
+  const tierHeading = form.querySelector('#service-tier-heading');
   let catalog;
   try {
     catalog = await api.get('/api/services');
@@ -223,10 +227,41 @@ async function initServicePicker(form) {
     if (offerBox) offerBox.textContent = '';
     return;
   }
+
+  const currentTier = () => form.querySelector('input[name="serviceTier"]:checked')?.value || 'standard';
+  const servicePrice = (service, tier) => (tier === 'premium' ? (service.pricePremium ?? service.price) : (service.priceStandard ?? service.price));
+
   const refresh = () => {
-    const sum = [...form.querySelectorAll('input[name="serviceIds"]:checked')].reduce((total, input) => total + Number(input.dataset.price || 0), 0);
+    const tier = currentTier();
+    if (tierHeading) {
+      tierHeading.textContent = tier === 'premium'
+        ? 'Cao cấp · GS / PGS.TS / TS.BS'
+        : 'Bình dân · Bác sĩ chuyên khoa';
+    }
+    let sum = 0;
+    form.querySelectorAll('.service-option').forEach((label) => {
+      const input = label.querySelector('input[name="serviceIds"]');
+      const priceEl = label.querySelector('em');
+      const price = tier === 'premium' ? Number(input.dataset.pricePremium) : Number(input.dataset.priceStandard);
+      if (priceEl) priceEl.textContent = formatMoney(price);
+      if (input.checked) sum += price;
+    });
     if (estimate) estimate.textContent = formatMoney(sum);
+    if (offerBox) {
+      const offer = catalog.firstVisit || {};
+      const parts = [];
+      if (offer.percent) parts.push(`giảm ${offer.percent}%${offer.maxDiscount ? ` (tối đa ${formatMoney(offer.maxDiscount)})` : ''} dịch vụ khám`);
+      if (offer.gift) {
+        const giftPrice = tier === 'premium' ? (offer.gift.pricePremium ?? offer.gift.price) : (offer.gift.priceStandard ?? offer.gift.price);
+        parts.push(`tặng ${offer.gift.name} (trị giá ${formatMoney(giftPrice)})`);
+      }
+      offerBox.textContent = parts.length
+        ? `Ưu đãi khám lần đầu: ${parts.join(' và ')}. Ưu đãi tự động áp dụng nếu số điện thoại của bạn chưa từng đặt lịch tại phòng khám.`
+        : '';
+      offerBox.hidden = !parts.length;
+    }
   };
+
   const options = catalog.services.map((service) => {
     const label = document.createElement('label');
     label.className = 'service-option';
@@ -234,7 +269,8 @@ async function initServicePicker(form) {
     input.type = 'checkbox';
     input.name = 'serviceIds';
     input.value = service.id;
-    input.dataset.price = String(service.price);
+    input.dataset.priceStandard = String(service.priceStandard ?? service.price);
+    input.dataset.pricePremium = String(service.pricePremium ?? service.price);
     input.addEventListener('change', refresh);
     const text = document.createElement('span');
     const name = document.createElement('strong');
@@ -243,24 +279,15 @@ async function initServicePicker(form) {
     note.textContent = service.description;
     text.append(name, note);
     const price = document.createElement('em');
-    price.textContent = formatMoney(service.price);
+    price.textContent = formatMoney(servicePrice(service, currentTier()));
     label.append(input, text, price);
     return label;
   });
   box.replaceChildren(...options);
-  if (offerBox) {
-    const offer = catalog.firstVisit || {};
-    const parts = [];
-    if (offer.percent) parts.push(`giảm ${offer.percent}%${offer.maxDiscount ? ` (tối đa ${formatMoney(offer.maxDiscount)})` : ''} dịch vụ khám`);
-    if (offer.gift) parts.push(`tặng ${offer.gift.name} (trị giá ${formatMoney(offer.gift.price)})`);
-    offerBox.textContent = parts.length
-      ? `Ưu đãi khám lần đầu: ${parts.join(' và ')}. Ưu đãi tự động áp dụng nếu số điện thoại của bạn chưa từng đặt lịch tại phòng khám.`
-      : '';
-    offerBox.hidden = !parts.length;
-  }
+
   // Chọn sẵn dịch vụ khám theo chuyên khoa; đổi chuyên khoa thì đổi theo, trừ khi khách đã tự chọn.
   let autoPicked = null;
-  form.querySelector('[name="specialty"]')?.addEventListener('change', (event) => {
+  const pickSpecialtyService = (specialtyValue) => {
     const checked = [...form.querySelectorAll('input[name="serviceIds"]:checked')];
     if (autoPicked && checked.length === 1 && checked[0] === autoPicked) {
       autoPicked.checked = false;
@@ -268,14 +295,21 @@ async function initServicePicker(form) {
       return;
     }
     autoPicked = null;
-    const match = catalog.services.find((service) => service.specialty && service.specialty === event.target.value);
+    const match = catalog.services.find((service) => service.specialty && service.specialty === specialtyValue);
     const input = match && form.querySelector(`input[name="serviceIds"][value="${CSS.escape(match.id)}"]`);
     if (input) { input.checked = true; autoPicked = input; }
     refresh();
-  });
+  };
+
+  const specialtySelect = form.querySelector('[name="specialty"]');
+  specialtySelect?.addEventListener('change', (event) => pickSpecialtyService(event.target.value));
   form.addEventListener('change', (event) => {
     if (event.target === autoPicked) autoPicked = null;
+    if (event.target?.name === 'serviceTier') refresh();
   });
+  form.addEventListener('tierchange', refresh);
+
+  if (specialtySelect?.value) pickSpecialtyService(specialtySelect.value);
   refresh();
 }
 
@@ -290,6 +324,7 @@ if (bookingForm) {
     let redirecting = false;
     try {
       const payload = formData(bookingForm);
+      delete payload.disease;
       payload.serviceIds = [...bookingForm.querySelectorAll('input[name="serviceIds"]:checked')].map((input) => input.value);
       if (!payload.serviceIds.length) throw new Error('Vui lòng chọn ít nhất một dịch vụ khám.');
       const { appointment, invoiceUrl } = await api.post('/api/appointments', payload);
@@ -460,46 +495,3 @@ function renderContactRequests(requests) {
     const action = document.createElement('td');
     if (item.status === 'open') {
       action.appendChild(makeActionButton('Đã xử lý', 'ghost-button', { id: item.id }, async () => {
-        try {
-          await api.patch(`/api/admin/contact-requests/${encodeURIComponent(item.id)}`, { status: 'resolved' });
-          showToast('Đã cập nhật yêu cầu tư vấn');
-          loadAdminPage();
-        } catch (error) { showToast('Chưa cập nhật được yêu cầu', error.message); }
-      }));
-    } else {
-      action.textContent = '—';
-    }
-    row.appendChild(action);
-    fragment.appendChild(row);
-  });
-  body.replaceChildren(fragment);
-}
-
-if (document.querySelector('#patient-appointment-table')) loadPatientPage();
-if (document.querySelector('#appointment-table')) loadAdminPage();
-
-document.querySelector('#patient-logout')?.addEventListener('click', async () => {
-  try { await api.post('/api/auth/logout', {}); } catch (error) { showToast('Không đăng xuất được', error.message); return; }
-  window.location.assign('/login');
-});
-document.querySelector('#admin-logout')?.addEventListener('click', async () => {
-  try { await api.post('/api/auth/logout', {}); } catch (error) { showToast('Không đăng xuất được', error.message); return; }
-  window.location.assign('/admin-login');
-});
-
-document.querySelector('#disease-search')?.addEventListener('input', filterDiseases);
-document.querySelector('#disease-category')?.addEventListener('change', filterDiseases);
-function filterDiseases() {
-  const query = (document.querySelector('#disease-search')?.value || '').toLowerCase();
-  const category = document.querySelector('#disease-category')?.value || 'all';
-  document.querySelectorAll('.disease-card').forEach((card) => {
-    card.style.display = card.textContent.toLowerCase().includes(query) && (category === 'all' || card.dataset.category === category) ? '' : 'none';
-  });
-}
-
-const hasPortalLoader = Boolean(document.querySelector('#patient-appointment-table, #appointment-table'));
-if (!hasPortalLoader && document.querySelector('[data-user-name]')) {
-  api.get('/api/auth/me').then(({ user }) => {
-    if (user) document.querySelectorAll('[data-user-name]').forEach((node) => { node.textContent = user.fullName; });
-  }).catch(() => {});
-}
