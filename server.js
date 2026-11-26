@@ -8,6 +8,7 @@ const { rateLimit } = require('express-rate-limit');
 const { pool, runMigrations, bootstrapAdmin } = require('./db');
 const locations = require('./data/locations.json');
 const doctorCatalog = require('./data/doctors.json');
+const prescriptionCatalog = require('./data/prescriptions.json');
 const billing = require('./lib/billing');
 const {
   findDoctor,
@@ -99,10 +100,10 @@ const isUuid = (value) => typeof value === 'string' && uuidPattern.test(value);
 const asyncRoute = (handler) => (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next);
 const fail = (res, status, error) => res.status(status).json({ error });
 const currentUser = (req) => req.session?.user || null;
-const requireUser = (req, res, next) => currentUser(req) ? next() : fail(res, 401, 'Vui lòng đăng nhập để tiếp tục.');
-const requireAdmin = (req, res, next) => currentUser(req)?.role === 'admin'
+const requireUser = (req, res, next) => (currentUser(req) ? next() : fail(res, 401, 'Vui lòng đăng nhập để tiếp tục.'));
+const requireAdmin = (req, res, next) => (currentUser(req)?.role === 'admin'
   ? next()
-  : fail(res, currentUser(req) ? 403 : 401, 'Bạn không có quyền truy cập khu vực quản trị.');
+  : fail(res, currentUser(req) ? 403 : 401, 'Bạn không có quyền truy cập khu vực quản trị.'));
 
 function csrfToken(req) {
   if (!req.session.csrfToken) req.session.csrfToken = crypto.randomBytes(32).toString('hex');
@@ -199,7 +200,7 @@ async function login(req, res, role) {
 app.post('/api/auth/login', authLimiter, verifySameOrigin, asyncRoute((req, res) => login(req, res, 'patient')));
 app.post('/api/auth/admin/login', authLimiter, verifySameOrigin, asyncRoute((req, res) => login(req, res, 'admin')));
 app.post('/api/auth/logout', verifySameOrigin, asyncRoute(async (req, res) => {
-  await new Promise((resolve, reject) => req.session.destroy((error) => error ? reject(error) : resolve()));
+  await new Promise((resolve, reject) => req.session.destroy((error) => (error ? reject(error) : resolve())));
   res.clearCookie('lk.sid', { httpOnly: true, secure: production, sameSite: 'lax', path: '/' });
   res.json({ ok: true });
 }));
@@ -245,7 +246,6 @@ app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   let serviceIds = Array.isArray(req.body.serviceIds)
     ? req.body.serviceIds.filter((value) => typeof value === 'string').map((value) => value.slice(0, 64))
     : [];
-  // Form ở trang chủ không có phần chọn dịch vụ: tự chọn dịch vụ khám theo chuyên khoa.
   if (!serviceIds.length) {
     const fallback = billing.defaultServiceFor(data.specialty);
     if (fallback) serviceIds = [fallback];
@@ -254,7 +254,6 @@ app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   const paymentMethod = rawMethod === undefined || rawMethod === '' ? 'cash' : rawMethod;
   if (!['cash', 'transfer'].includes(paymentMethod)) return fail(res, 400, 'Hình thức thanh toán không hợp lệ.');
 
-  // Khám lần đầu: chuẩn hóa số điện thoại về dạng chữ số để tránh lách ưu đãi.
   const phoneKey = canonicalPhone(data.phone);
   const previous = await pool.query(
     `SELECT 1 FROM clinic_appointments
@@ -300,7 +299,7 @@ app.get('/api/appointments', requireUser, asyncRoute(async (req, res) => {
       pool.query(
         `SELECT id, public_code, patient_id, full_name, phone, specialty, doctor, service_tier, appointment_date, appointment_time, note,
                 location_id, location_name, location_city, location_address, status, created_at,
-                total_vnd, is_first_visit, payment_method, payment_status
+                total_vnd, is_first_visit, payment_method, payment_status, prescription, prescription_total_vnd
          FROM clinic_appointments ORDER BY created_at DESC LIMIT 200`,
       ),
       pool.query(
@@ -313,7 +312,7 @@ app.get('/api/appointments', requireUser, asyncRoute(async (req, res) => {
   const result = await pool.query(
     `SELECT id, public_code, full_name, specialty, doctor, service_tier, appointment_date, appointment_time,
             location_id, location_name, location_city, location_address, status, created_at,
-            total_vnd, is_first_visit, payment_method, payment_status
+            total_vnd, is_first_visit, payment_method, payment_status, prescription, prescription_total_vnd
      FROM clinic_appointments WHERE patient_id = $1 ORDER BY created_at DESC LIMIT 100`,
     [user.id],
   );
@@ -325,7 +324,8 @@ app.get('/api/invoices/:code', asyncRoute(async (req, res) => {
   const result = await pool.query(
     `SELECT public_code, patient_id, full_name, phone, specialty, doctor, service_tier, appointment_date, appointment_time,
             location_name, location_city, location_address, status, created_at,
-            billing, subtotal_vnd, discount_vnd, total_vnd, is_first_visit, payment_method, payment_status, paid_at, invoice_token
+            billing, subtotal_vnd, discount_vnd, total_vnd, is_first_visit, payment_method, payment_status, paid_at,
+            prescription, prescription_total_vnd, invoice_token
      FROM clinic_appointments WHERE public_code = $1 LIMIT 1`,
     [code],
   );
@@ -368,6 +368,58 @@ app.patch('/api/admin/appointments/:id', requireAdmin, verifySameOrigin, asyncRo
     `UPDATE clinic_appointments SET status = $1, updated_at = NOW()
      WHERE id = $2 RETURNING id, public_code, status`,
     [status, req.params.id],
+  );
+  if (!result.rowCount) return fail(res, 404, 'Không tìm thấy lịch hẹn.');
+  res.json({ appointment: result.rows[0] });
+}));
+
+app.get('/api/admin/prescription-templates', requireAdmin, (_req, res) => {
+  res.json(prescriptionCatalog);
+});
+
+app.patch('/api/admin/appointments/:id/prescription', requireAdmin, verifySameOrigin, asyncRoute(async (req, res) => {
+  if (!isUuid(req.params.id)) return fail(res, 400, 'Mã lịch hẹn không hợp lệ.');
+  const diagnosis = inputString(req.body.diagnosis, 300);
+  const advice = inputString(req.body.advice, 1000);
+  const rawItems = Array.isArray(req.body.items) ? req.body.items : [];
+  if (!diagnosis) return fail(res, 400, 'Vui lòng nhập chẩn đoán.');
+  if (!rawItems.length || rawItems.length > 20) {
+    return fail(res, 400, 'Đơn thuốc cần có từ 1 đến 20 loại thuốc.');
+  }
+
+  const items = [];
+  for (const row of rawItems) {
+    const name = inputString(row?.name, 160);
+    const dosage = inputString(row?.dosage, 200);
+    const unit = inputString(row?.unit, 40) || 'Viên';
+    const quantity = Math.floor(Number(row?.quantity));
+    const unitPrice = Math.floor(Number(row?.unitPrice));
+    if (!name || !dosage) return fail(res, 400, 'Mỗi thuốc cần có tên thuốc và liều dùng.');
+    if (!Number.isFinite(quantity) || quantity < 1 || quantity > 500) {
+      return fail(res, 400, `Số lượng thuốc "${name}" không hợp lệ.`);
+    }
+    if (!Number.isFinite(unitPrice) || unitPrice < 0 || unitPrice > 50000000) {
+      return fail(res, 400, `Đơn giá thuốc "${name}" không hợp lệ.`);
+    }
+    items.push({ name, dosage, quantity, unit, unitPrice, lineTotal: quantity * unitPrice });
+  }
+
+  const prescriptionTotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
+  const prescription = {
+    diagnosis,
+    advice,
+    prescribedBy: currentUser(req)?.fullName || 'Bác sĩ Lộc Khang',
+    prescribedAt: new Date().toISOString(),
+    items,
+    total: prescriptionTotal,
+  };
+
+  const result = await pool.query(
+    `UPDATE clinic_appointments
+     SET prescription = $1::jsonb, prescription_total_vnd = $2, updated_at = NOW()
+     WHERE id = $3
+     RETURNING id, public_code, prescription, prescription_total_vnd`,
+    [JSON.stringify(prescription), prescriptionTotal, req.params.id],
   );
   if (!result.rowCount) return fail(res, 404, 'Không tìm thấy lịch hẹn.');
   res.json({ appointment: result.rows[0] });
