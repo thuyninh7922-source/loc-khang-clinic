@@ -153,6 +153,26 @@
       "pricePremium": 550000,
       "specialty": "Thận – tiết niệu",
       "description": "Khám sỏi, nhiễm trùng tiểu và bệnh thận."
+    },
+    {
+      "id": "svc-hoi-chan-chuyen-gia",
+      "name": "Hội chẩn chuyên sâu cùng GS / PGS.TS",
+      "price": 900000,
+      "priceStandard": 900000,
+      "pricePremium": 900000,
+      "specialty": "",
+      "onlyTier": "premium",
+      "description": "Hội chẩn đa chuyên khoa, đánh giá hồ sơ bệnh án phức tạp và lập phác đồ cá nhân hóa."
+    },
+    {
+      "id": "svc-tam-soat-vip",
+      "name": "Gói xét nghiệm & tầm soát chuyên sâu VIP",
+      "price": 1200000,
+      "priceStandard": 1200000,
+      "pricePremium": 1200000,
+      "specialty": "",
+      "onlyTier": "premium",
+      "description": "Xét nghiệm sinh hóa mở rộng, dấu ấn tầm soát sớm và ưu tiên trả kết quả trong ngày."
     }
   ],
   "firstVisit": {
