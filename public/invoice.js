@@ -93,6 +93,10 @@
     );
     head.append(brand, title);
 
+    const tierText = invoice.service_tier === 'premium'
+      ? 'Hạng: Dịch vụ cao cấp (GS / PGS.TS / TS.BS)'
+      : 'Hạng: Dịch vụ thường (Bình dân)';
+
     const grid = el('div', 'invoice-grid');
     grid.append(
       block('Người bệnh', [[invoice.full_name], [invoice.phone, true]]),
@@ -100,6 +104,7 @@
         [`${dateText(invoice.appointment_date)} · ${invoice.appointment_time || '—'}`],
         [invoice.specialty, true],
         [invoice.doctor, true],
+        [tierText, true],
       ]),
       block('Cơ sở khám', [
         [invoice.location_name],
