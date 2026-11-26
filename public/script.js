@@ -18,24 +18,30 @@ document.querySelectorAll('.main-nav a').forEach((link) => {
 const specialtyFeature = document.querySelector('.specialty-feature');
 const specialtyTitle = specialtyFeature?.querySelector('h3');
 const specialtyDescription = specialtyFeature?.querySelector('p');
+const featureIndex = specialtyFeature?.querySelector('.feature-index');
 const specialtyDescriptions = {
   'Nội tổng quát': 'Thăm khám tổng thể, tầm soát sớm và quản lý sức khỏe chủ động cho người lớn.',
   'Tim mạch': 'Theo dõi sức khỏe trái tim bằng quy trình tầm soát rõ ràng, nhẹ nhàng và chính xác.',
   'Nhi khoa': 'Đồng hành cùng bé trong những năm đầu với sự kiên nhẫn, thấu hiểu và yêu thương.',
   'Sản phụ khoa': 'Chăm sóc sức khỏe phụ nữ toàn diện, riêng tư và an tâm ở mọi giai đoạn.',
   'Cơ xương khớp': 'Giúp bạn vận động nhẹ nhàng hơn với phác đồ phù hợp và tư vấn sát nhu cầu.',
-  'Da liễu': 'Lắng nghe làn da, tìm đúng nguyên nhân và xây dựng thói quen chăm sóc bền vững.'
+  'Da liễu': 'Lắng nghe làn da, tìm đúng nguyên nhân và xây dựng thói quen chăm sóc bền vững.',
 };
 
-document.querySelectorAll('.specialty-row').forEach((row) => {
+const specialtyRows = [...document.querySelectorAll('.specialty-row')];
+specialtyRows.forEach((row, index) => {
   row.addEventListener('click', () => {
-    document.querySelectorAll('.specialty-row').forEach((item) => item.classList.remove('active'));
+    specialtyRows.forEach((item) => item.classList.remove('active'));
     row.classList.add('active');
     const name = row.dataset.specialty;
     if (specialtyTitle) specialtyTitle.textContent = name;
     if (specialtyDescription) specialtyDescription.textContent = specialtyDescriptions[name] || specialtyDescriptions['Nội tổng quát'];
-    const specialtySelect = document.querySelector('select[name="specialty"]');
-    if (specialtySelect) specialtySelect.value = name;
+    if (featureIndex) featureIndex.textContent = `${String(index + 1).padStart(2, '0')} / ${String(specialtyRows.length).padStart(2, '0')}`;
+    const specialtySelect = document.querySelector('#appointment-form select[name="specialty"]');
+    if (specialtySelect) {
+      specialtySelect.value = name;
+      specialtySelect.dispatchEvent(new Event('change', { bubbles: true }));
+    }
   });
 });
 
@@ -116,7 +122,10 @@ const api = (() => {
       body: JSON.stringify(body),
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || 'Không thể gửi yêu cầu.');
+    if (!response.ok) {
+      if (response.status === 403 && /Phiên bảo mật/.test(data.error || '')) csrfToken = '';
+      throw new Error(data.error || 'Không thể gửi yêu cầu.');
+    }
     return data;
   };
 })();
@@ -135,17 +144,26 @@ document.querySelector('#appointment-form')?.addEventListener('submit', async (e
   const original = submit.innerHTML;
   submit.disabled = true;
   submit.textContent = 'Đang gửi yêu cầu…';
+  let redirecting = false;
   try {
     const body = Object.fromEntries(new FormData(form).entries());
-    const { appointment } = await api('/api/appointments', body);
-    form.reset();
-    if (dateInput) dateInput.min = localDateString();
-    showToast(`Đã nhận yêu cầu ${appointment.public_code}`, 'Điều phối viên sẽ gọi lại để xác nhận lịch hẹn.');
+    const { appointment, invoiceUrl } = await api('/api/appointments', body);
+    if (invoiceUrl) {
+      redirecting = true;
+      showToast(`Đã nhận yêu cầu ${appointment.public_code}`, 'Đang mở hóa đơn đặt lịch của bạn.');
+      setTimeout(() => { window.location.assign(invoiceUrl); }, 900);
+    } else {
+      form.reset();
+      if (dateInput) dateInput.min = localDateString();
+      showToast(`Đã nhận yêu cầu ${appointment.public_code}`, 'Điều phối viên sẽ gọi lại để xác nhận lịch hẹn.');
+    }
   } catch (error) {
     showToast('Chưa gửi được yêu cầu', error.message);
   } finally {
-    submit.disabled = false;
-    submit.innerHTML = original;
+    if (!redirecting) {
+      submit.disabled = false;
+      submit.innerHTML = original;
+    }
   }
 });
 
