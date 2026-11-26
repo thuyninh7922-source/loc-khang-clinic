@@ -1,0 +1,100 @@
+{
+  "tiers": {
+    "standard": {
+      "label": "Dịch vụ thường (Bình dân)",
+      "shortLabel": "Thường (Bình dân)",
+      "description": "Thăm khám cùng Bác sĩ chuyên khoa giàu kinh nghiệm, chi phí tiết kiệm."
+    },
+    "premium": {
+      "label": "Dịch vụ cao cấp (GS / PGS.TS / TS.BS)",
+      "shortLabel": "Cao cấp (GS/PGS/TS)",
+      "description": "Trực tiếp Giáo sư, Phó Giáo sư, Tiến sĩ thăm khám và tư vấn chuyên sâu."
+    }
+  },
+  "doctors": [
+    { "name": "BS. Nguyễn Minh An", "specialty": "Nội tổng quát", "tier": "standard", "degree": "BS." },
+    { "name": "BS. Võ Thanh Hà", "specialty": "Nội tổng quát", "tier": "standard", "degree": "BS." },
+    { "name": "GS.TS. Nguyễn Hữu Hưng", "specialty": "Nội tổng quát", "tier": "premium", "degree": "GS.TS." },
+
+    { "name": "BS. Trần Quốc Huy", "specialty": "Tim mạch", "tier": "standard", "degree": "BS." },
+    { "name": "PGS.TS. Lê Quang Vũ", "specialty": "Tim mạch", "tier": "premium", "degree": "PGS.TS." },
+    { "name": "TS.BS. Đặng Quốc Bảo", "specialty": "Tim mạch", "tier": "premium", "degree": "TS.BS." },
+
+    { "name": "BS. Trần Hoài Thương", "specialty": "Nhi khoa", "tier": "standard", "degree": "BS." },
+    { "name": "BS. Huỳnh Mai Anh", "specialty": "Nhi khoa", "tier": "standard", "degree": "BS." },
+    { "name": "PGS.TS. Đỗ Minh Châu", "specialty": "Nhi khoa", "tier": "premium", "degree": "PGS.TS." },
+
+    { "name": "BS. Nguyễn Bảo Ngọc", "specialty": "Sản phụ khoa", "tier": "standard", "degree": "BS." },
+    { "name": "BS. Ngô Thu Trang", "specialty": "Sản phụ khoa", "tier": "standard", "degree": "BS." },
+    { "name": "TS.BS. Lê Thị Thanh Tâm", "specialty": "Sản phụ khoa", "tier": "premium", "degree": "TS.BS." },
+
+    { "name": "BS. Lê Minh Khoa", "specialty": "Cơ xương khớp", "tier": "standard", "degree": "BS." },
+    { "name": "PGS.TS. Phạm Văn Sơn", "specialty": "Cơ xương khớp", "tier": "premium", "degree": "PGS.TS." },
+
+    { "name": "BS. Phạm Hà Phương", "specialty": "Da liễu", "tier": "standard", "degree": "BS." },
+    { "name": "TS.BS. Nguyễn Thu Hiền", "specialty": "Da liễu", "tier": "premium", "degree": "TS.BS." },
+
+    { "name": "BS. Bùi Anh Tuấn", "specialty": "Tai mũi họng", "tier": "standard", "degree": "BS." },
+    { "name": "PGS.TS. Vũ Đình Nam", "specialty": "Tai mũi họng", "tier": "premium", "degree": "PGS.TS." },
+
+    { "name": "BS. Lý Ngọc Diệp", "specialty": "Mắt", "tier": "standard", "degree": "BS." },
+    { "name": "TS.BS. Trần Quang Minh", "specialty": "Mắt", "tier": "premium", "degree": "TS.BS." },
+
+    { "name": "BS. Nguyễn Hoàng Lâm", "specialty": "Tiêu hóa", "tier": "standard", "degree": "BS." },
+    { "name": "PGS.TS. Hoàng Gia Khánh", "specialty": "Tiêu hóa", "tier": "premium", "degree": "PGS.TS." },
+
+    { "name": "BS. Đoàn Thế Hiển", "specialty": "Thần kinh", "tier": "standard", "degree": "BS." },
+    { "name": "GS.TS. Trần Đức Thành", "specialty": "Thần kinh", "tier": "premium", "degree": "GS.TS." },
+
+    { "name": "BS. Lê Ngọc Ánh", "specialty": "Nội tiết", "tier": "standard", "degree": "BS." },
+    { "name": "TS.BS. Mai Thúy Vy", "specialty": "Nội tiết", "tier": "premium", "degree": "TS.BS." },
+
+    { "name": "BS. Phan Đức Long", "specialty": "Răng hàm mặt", "tier": "standard", "degree": "BS." },
+    { "name": "PGS.TS. Nguyễn Tiến Dũng", "specialty": "Răng hàm mặt", "tier": "premium", "degree": "PGS.TS." },
+
+    { "name": "BS. Trịnh Kim Oanh", "specialty": "Hô hấp", "tier": "standard", "degree": "BS." },
+    { "name": "TS.BS. Đặng Hải Yến", "specialty": "Hô hấp", "tier": "premium", "degree": "TS.BS." },
+
+    { "name": "BS. Cao Văn Đức", "specialty": "Thận – tiết niệu", "tier": "standard", "degree": "BS." },
+    { "name": "PGS.TS. Trương Công Lập", "specialty": "Thận – tiết niệu", "tier": "premium", "degree": "PGS.TS." }
+  ],
+  "diseases": [
+    { "name": "Rối loạn giấc ngủ", "specialty": "Nội tổng quát" },
+    { "name": "Đau đầu, chóng mặt", "specialty": "Nội tổng quát" },
+    { "name": "Mệt mỏi kéo dài", "specialty": "Nội tổng quát" },
+    { "name": "Tăng huyết áp", "specialty": "Tim mạch" },
+    { "name": "Đau ngực", "specialty": "Tim mạch" },
+    { "name": "Rối loạn mỡ máu", "specialty": "Tim mạch" },
+    { "name": "Ho và cảm cúm ở trẻ", "specialty": "Nhi khoa" },
+    { "name": "Sốt ở trẻ nhỏ", "specialty": "Nhi khoa" },
+    { "name": "Tiêu chảy ở trẻ", "specialty": "Nhi khoa" },
+    { "name": "Viêm da cơ địa", "specialty": "Da liễu" },
+    { "name": "Mụn trứng cá", "specialty": "Da liễu" },
+    { "name": "Nổi mề đay", "specialty": "Da liễu" },
+    { "name": "Chăm sóc thai kỳ", "specialty": "Sản phụ khoa" },
+    { "name": "Rối loạn kinh nguyệt", "specialty": "Sản phụ khoa" },
+    { "name": "Viêm nhiễm phụ khoa", "specialty": "Sản phụ khoa" },
+    { "name": "Đau lưng", "specialty": "Cơ xương khớp" },
+    { "name": "Thoái hóa khớp gối", "specialty": "Cơ xương khớp" },
+    { "name": "Đau cổ vai gáy", "specialty": "Cơ xương khớp" },
+    { "name": "Viêm xoang", "specialty": "Tai mũi họng" },
+    { "name": "Viêm họng", "specialty": "Tai mũi họng" },
+    { "name": "Ù tai, nghe kém", "specialty": "Tai mũi họng" },
+    { "name": "Tật khúc xạ", "specialty": "Mắt" },
+    { "name": "Khô mắt", "specialty": "Mắt" },
+    { "name": "Đỏ mắt, ngứa mắt", "specialty": "Mắt" },
+    { "name": "Trào ngược dạ dày – thực quản", "specialty": "Tiêu hóa" },
+    { "name": "Đau bụng, đầy hơi", "specialty": "Tiêu hóa" },
+    { "name": "Táo bón", "specialty": "Tiêu hóa" },
+    { "name": "Đau nửa đầu", "specialty": "Thần kinh" },
+    { "name": "Tê bì tay chân", "specialty": "Thần kinh" },
+    { "name": "Đái tháo đường", "specialty": "Nội tiết" },
+    { "name": "Bệnh tuyến giáp", "specialty": "Nội tiết" },
+    { "name": "Sâu răng", "specialty": "Răng hàm mặt" },
+    { "name": "Viêm lợi", "specialty": "Răng hàm mặt" },
+    { "name": "Hen phế quản", "specialty": "Hô hấp" },
+    { "name": "Ho kéo dài", "specialty": "Hô hấp" },
+    { "name": "Sỏi tiết niệu", "specialty": "Thận – tiết niệu" },
+    { "name": "Nhiễm trùng đường tiểu", "specialty": "Thận – tiết niệu" }
+  ]
+}
