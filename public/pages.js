@@ -242,8 +242,20 @@ async function initServicePicker(form) {
     form.querySelectorAll('.service-option').forEach((label) => {
       const input = label.querySelector('input[name="serviceIds"]');
       const priceEl = label.querySelector('em');
+      const nameEl = label.querySelector('strong');
+      const onlyTier = input.dataset.onlyTier || '';
+      const visible = !onlyTier || onlyTier === tier;
+      label.hidden = !visible;
+      if (!visible) {
+        input.checked = false;
+        return;
+      }
       const price = tier === 'premium' ? Number(input.dataset.pricePremium) : Number(input.dataset.priceStandard);
       if (priceEl) priceEl.textContent = formatMoney(price);
+      if (nameEl) {
+        const baseName = input.dataset.baseName || '';
+        nameEl.textContent = tier === 'premium' && !onlyTier ? `${baseName} (Cao cấp)` : baseName;
+      }
       if (input.checked) sum += price;
     });
     if (estimate) estimate.textContent = formatMoney(sum);
@@ -269,6 +281,8 @@ async function initServicePicker(form) {
     input.type = 'checkbox';
     input.name = 'serviceIds';
     input.value = service.id;
+    input.dataset.baseName = service.name;
+    input.dataset.onlyTier = service.onlyTier || '';
     input.dataset.priceStandard = String(service.priceStandard ?? service.price);
     input.dataset.pricePremium = String(service.pricePremium ?? service.price);
     input.addEventListener('change', refresh);
@@ -285,7 +299,6 @@ async function initServicePicker(form) {
   });
   box.replaceChildren(...options);
 
-  // Chọn sẵn dịch vụ khám theo chuyên khoa; đổi chuyên khoa thì đổi theo, trừ khi khách đã tự chọn.
   let autoPicked = null;
   const pickSpecialtyService = (specialtyValue) => {
     const checked = [...form.querySelectorAll('input[name="serviceIds"]:checked')];
@@ -495,3 +508,54 @@ function renderContactRequests(requests) {
     const action = document.createElement('td');
     if (item.status === 'open') {
       action.appendChild(makeActionButton('Đã xử lý', 'ghost-button', { id: item.id }, async () => {
+        try {
+          await api.patch(`/api/admin/contact-requests/${encodeURIComponent(item.id)}`, { status: 'resolved' });
+          showToast('Đã cập nhật yêu cầu tư vấn');
+          loadAdminPage();
+        } catch (error) { showToast('Chưa cập nhật được yêu cầu', error.message); }
+      }));
+    } else {
+      action.textContent = '—';
+    }
+    row.appendChild(action);
+    fragment.appendChild(row);
+  });
+  body.replaceChildren(fragment);
+}
+
+if (document.querySelector('#patient-appointment-table')) loadPatientPage();
+if (document.querySelector('#appointment-table')) loadAdminPage();
+
+document.querySelector('#patient-logout')?.addEventListener('click', async () => {
+  try { await api.post('/api/auth/logout', {}); } catch (error) { showToast('Không đăng xuất được', error.message); return; }
+  window.location.assign('/login');
+});
+document.querySelector('#admin-logout')?.addEventListener('click', async () => {
+  try { await api.post('/api/auth/logout', {}); } catch (error) { showToast('Không đăng xuất được', error.message); return; }
+  window.location.assign('/admin-login');
+});
+
+document.querySelector('#disease-search')?.addEventListener('input', filterDiseases);
+document.querySelector('#disease-category')?.addEventListener('change', filterDiseases);
+function filterDiseases() {
+  const query = (document.querySelector('#disease-search')?.value || '').toLowerCase();
+  const category = document.querySelector('#disease-category')?.value || 'all';
+  document.querySelectorAll('.disease-card').forEach((card) => {
+    card.style.display = card.textContent.toLowerCase().includes(query) && (category === 'all' || card.dataset.category === category) ? '' : 'none';
+  });
+}
+
+document.querySelectorAll('.disease-card[data-category]').forEach((card) => {
+  const link = card.querySelector('a[href="/booking"]');
+  const title = card.querySelector('h3')?.textContent?.trim();
+  if (!link || !title) return;
+  const query = new URLSearchParams({ specialty: card.dataset.category, disease: title });
+  link.href = `/booking?${query.toString()}`;
+});
+
+const hasPortalLoader = Boolean(document.querySelector('#patient-appointment-table, #appointment-table'));
+if (!hasPortalLoader && document.querySelector('[data-user-name]')) {
+  api.get('/api/auth/me').then(({ user }) => {
+    if (user) document.querySelectorAll('[data-user-name]').forEach((node) => { node.textContent = user.fullName; });
+  }).catch(() => {});
+}
