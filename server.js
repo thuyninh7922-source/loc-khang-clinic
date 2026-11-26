@@ -228,11 +228,17 @@ app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   if (validationError) return fail(res, 400, validationError);
   const location = locations.find((item) => item.id === data.locationId);
   if (!location) return fail(res, 400, 'Vui lòng chọn một cơ sở trong danh sách.');
-  const serviceIds = Array.isArray(req.body.serviceIds)
+  let serviceIds = Array.isArray(req.body.serviceIds)
     ? req.body.serviceIds.filter((value) => typeof value === 'string').map((value) => value.slice(0, 64))
     : [];
-  const paymentMethod = ['cash', 'transfer'].includes(req.body.paymentMethod) ? req.body.paymentMethod : '';
-  if (!paymentMethod) return fail(res, 400, 'Vui lòng chọn hình thức thanh toán.');
+  // Form ở trang chủ không có phần chọn dịch vụ: tự chọn dịch vụ khám theo chuyên khoa.
+  if (!serviceIds.length) {
+    const fallback = billing.defaultServiceFor(data.specialty);
+    if (fallback) serviceIds = [fallback];
+  }
+  const rawMethod = req.body.paymentMethod;
+  const paymentMethod = rawMethod === undefined || rawMethod === '' ? 'cash' : rawMethod;
+  if (!['cash', 'transfer'].includes(paymentMethod)) return fail(res, 400, 'Hình thức thanh toán không hợp lệ.');
   // Khám lần đầu: số điện thoại chưa từng có lịch hẹn nào chưa bị hủy.
   const previous = await pool.query(
     "SELECT 1 FROM clinic_appointments WHERE phone = $1 AND status <> 'cancelled' LIMIT 1",

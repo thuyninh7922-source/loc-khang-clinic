@@ -255,12 +255,23 @@ async function initServicePicker(form) {
       : '';
     offerBox.hidden = !parts.length;
   }
-  // Chọn sẵn dịch vụ khám theo chuyên khoa nếu chưa chọn gì.
+  // Chọn sẵn dịch vụ khám theo chuyên khoa; đổi chuyên khoa thì đổi theo, trừ khi khách đã tự chọn.
+  let autoPicked = null;
   form.querySelector('[name="specialty"]')?.addEventListener('change', (event) => {
-    if (form.querySelector('input[name="serviceIds"]:checked')) return;
+    const checked = [...form.querySelectorAll('input[name="serviceIds"]:checked')];
+    if (autoPicked && checked.length === 1 && checked[0] === autoPicked) {
+      autoPicked.checked = false;
+    } else if (checked.length) {
+      return;
+    }
+    autoPicked = null;
     const match = catalog.services.find((service) => service.specialty && service.specialty === event.target.value);
     const input = match && form.querySelector(`input[name="serviceIds"][value="${CSS.escape(match.id)}"]`);
-    if (input) { input.checked = true; refresh(); }
+    if (input) { input.checked = true; autoPicked = input; }
+    refresh();
+  });
+  form.addEventListener('change', (event) => {
+    if (event.target === autoPicked) autoPicked = null;
   });
   refresh();
 }
