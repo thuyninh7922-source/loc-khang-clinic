@@ -19,6 +19,7 @@ const {
 
 const app = express();
 const root = __dirname;
+const publicDir = path.join(root, 'public');
 const port = Number(process.env.PORT || 3000);
 const production = process.env.NODE_ENV === 'production';
 const sessionSecret = process.env.SESSION_SECRET || (!production ? crypto.randomBytes(32).toString('hex') : '');
@@ -86,9 +87,8 @@ const pages = {
   '/invoice': 'invoice.html',
 };
 for (const [route, file] of Object.entries(pages)) {
-  app.get(route, (req, res) => res.sendFile(path.join(root, file)));
+  app.get(route, (req, res) => res.sendFile(path.join(publicDir, file)));
 }
-
 const asyncRoute = (handler) => (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next);
 const fail = (res, status, error) => res.status(status).json({ error });
 const currentUser = (req) => req.session?.user || null;
@@ -387,7 +387,7 @@ app.patch('/api/admin/contact-requests/:id', requireAdmin, verifySameOrigin, asy
 }));
 
 app.use('/api', (_req, res) => fail(res, 404, 'Không tìm thấy API này.'));
-app.use(express.static(root, { index: false, dotfiles: 'deny', fallthrough: true, maxAge: production ? '1h' : 0 }));
+app.use(express.static(publicDir, { index: false, dotfiles: 'deny', fallthrough: true, maxAge: production ? '1h' : 0 }));
 app.use((req, res) => res.status(404).send('Không tìm thấy trang.'));
 app.use((error, _req, res, _next) => {
   console.error('Request failed:', error.message);
