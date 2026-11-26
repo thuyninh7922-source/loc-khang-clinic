@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Đặt lịch khám tại cơ sở Lộc Khang phù hợp. Bạn có thể tự chọn tỉnh/thành hoặc chủ động dùng GPS để gợi ý điểm gần nhất.">
+  <meta name="description" content="Đặt lịch khám tại cơ sở Lộc Khang phù hợp. Chọn bệnh lý, hạng dịch vụ thường hoặc cao cấp cùng đội ngũ chuyên gia.">
   <meta name="theme-color" content="#0b5b5a">
   <title>Đặt lịch khám — Lộc Khang Clinic</title>
   <link rel="stylesheet" href="/styles.css">
@@ -23,14 +23,18 @@
   <main class="page-main">
     <div class="container">
       <div class="page-hero">
-        <div><span class="page-kicker">Lịch hẹn của bạn</span><h1>Đặt lịch khám<br><em>theo cách nhẹ nhàng.</em></h1><p>Chọn bác sĩ, chuyên khoa, cơ sở và thời gian phù hợp. Điều phối viên sẽ gọi lại xác nhận lịch hẹn.</p></div>
+        <div><span class="page-kicker">Lịch hẹn của bạn</span><h1>Đặt lịch khám<br><em>theo cách nhẹ nhàng.</em></h1><p>Chọn bệnh lý hoặc bác sĩ mong muốn, chọn hạng dịch vụ bình dân hoặc cao cấp với Giáo sư, Phó Giáo sư, Tiến sĩ.</p></div>
         <div class="page-actions"><a class="ghost-button" href="/doctors">Xem đội ngũ bác sĩ ↗</a></div>
       </div>
       <div class="booking-layout">
         <div class="booking-card">
           <form id="portal-booking-form" class="booking-form">
             <div class="form-heading"><div><span class="mini-label">Đặt lịch trực tuyến</span><h3>Bắt đầu từ hôm nay</h3></div><span class="form-badge">Ưu đãi khám lần đầu</span></div>
-            <div class="form-row"><label>Họ và tên <input name="fullName" autocomplete="name" placeholder="Nguyễn Văn An" required></label><label>Số điện thoại <input name="phone" type="tel" autocomplete="tel" pattern="[0-9+ ()-]{9,}" placeholder="090 123 4567" required></label></div>
+            <div class="form-row">
+              <label>Họ và tên <input name="fullName" autocomplete="name" placeholder="Nguyễn Văn An" required></label>
+              <label>Số điện thoại <input name="phone" type="tel" autocomplete="tel" pattern="[0-9+ ()-]{9,}" placeholder="090 123 4567" required></label>
+            </div>
+
             <div class="location-picker" data-location-picker>
               <div class="location-picker-heading"><strong>Cơ sở khám</strong><a href="/locations">Xem bản đồ các điểm mẫu ↗</a></div>
               <div class="location-picker-controls">
@@ -41,15 +45,81 @@
               <div class="location-recommendation" data-location-recommendation role="status" aria-live="polite">Bạn có thể tự chọn tỉnh/thành. Chỉ khi bấm nút định vị, trình duyệt mới hỏi quyền GPS; tọa độ chỉ dùng trên thiết bị của bạn.</div>
               <p class="location-sample-disclaimer">Các cơ sở hiện là dữ liệu minh họa, địa chỉ và hoạt động chưa được xác nhận.</p>
             </div>
-            <div class="form-row"><label>Chuyên khoa <select name="specialty" required><option value="">Chọn chuyên khoa</option><option>Nội tổng quát</option><option>Tim mạch</option><option>Nhi khoa</option><option>Sản phụ khoa</option><option>Cơ xương khớp</option><option>Da liễu</option><option>Tai mũi họng</option><option>Mắt</option><option>Tiêu hóa</option><option>Thần kinh</option><option>Nội tiết</option><option>Răng hàm mặt</option><option>Hô hấp</option><option>Thận – tiết niệu</option></select></label><label>Bác sĩ mong muốn <select name="doctor" required><option value="">Chọn bác sĩ</option><option data-specialty="Nội tổng quát">BS. Nguyễn Minh An</option><option data-specialty="Nhi khoa">BS. Trần Hoài Thương</option><option data-specialty="Tim mạch">PGS.TS. Lê Quang Vũ</option><option data-specialty="Da liễu">BS. Phạm Hà Phương</option><option data-specialty="Cơ xương khớp">BS. Lê Minh Khoa</option><option data-specialty="Sản phụ khoa">BS. Nguyễn Bảo Ngọc</option><option data-specialty="Nội tổng quát">BS. Võ Thanh Hà</option><option data-specialty="Tim mạch">TS.BS. Đặng Quốc Bảo</option><option data-specialty="Nhi khoa">BS. Huỳnh Mai Anh</option><option data-specialty="Sản phụ khoa">BS. Ngô Thu Trang</option><option data-specialty="Tai mũi họng">BS. Bùi Anh Tuấn</option><option data-specialty="Mắt">BS. Lý Ngọc Diệp</option><option data-specialty="Tiêu hóa">PGS.TS. Hoàng Gia Khánh</option><option data-specialty="Thần kinh">BS. Đoàn Thế Hiển</option><option data-specialty="Nội tiết">TS.BS. Mai Thúy Vy</option><option data-specialty="Răng hàm mặt">BS. Phan Đức Long</option><option data-specialty="Hô hấp">BS. Trịnh Kim Oanh</option><option data-specialty="Thận – tiết niệu">BS. Cao Văn Đức</option></select></label></div>
-            <div class="form-row"><label>Ngày khám <input name="date" type="date" required></label><label>Khung giờ <select name="time" required><option value="">Chọn khung giờ</option><option>07:30 — 09:00</option><option>09:00 — 11:00</option><option>13:30 — 15:30</option><option>15:30 — 20:00</option></select></label></div>
+
+            <fieldset class="billing-fieldset" data-tier-picker>
+              <legend>Hạng dịch vụ khám</legend>
+              <div class="tier-options">
+                <label class="pay-option tier-option">
+                  <input type="radio" name="serviceTier" value="standard" checked>
+                  <span>
+                    <strong>Dịch vụ thường (Bình dân) <span class="tier-tag">Bác sĩ chuyên khoa</span></strong>
+                    <small>Khám cùng đội ngũ Bác sĩ chuyên khoa giàu kinh nghiệm, mức giá tiết kiệm.</small>
+                  </span>
+                </label>
+                <label class="pay-option tier-option tier-premium">
+                  <input type="radio" name="serviceTier" value="premium">
+                  <span>
+                    <strong>Dịch vụ cao cấp (Chuyên gia) <span class="tier-tag premium">GS · PGS.TS · TS.BS</span></strong>
+                    <small>Trực tiếp Giáo sư, Phó Giáo sư, Tiến sĩ thăm khám và tư vấn chuyên sâu.</small>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+            <label>Bệnh lý / triệu chứng cần khám (tự động chọn đúng chuyên khoa &amp; bác sĩ)
+              <select name="disease" data-disease-select>
+                <option value="">— Chọn bệnh lý (hoặc tự chọn chuyên khoa / bác sĩ bên dưới) —</option>
+              </select>
+            </label>
+
+            <div class="form-row">
+              <label>Chuyên khoa
+                <select name="specialty" required>
+                  <option value="">Chọn chuyên khoa</option>
+                  <option>Nội tổng quát</option>
+                  <option>Tim mạch</option>
+                  <option>Nhi khoa</option>
+                  <option>Sản phụ khoa</option>
+                  <option>Cơ xương khớp</option>
+                  <option>Da liễu</option>
+                  <option>Tai mũi họng</option>
+                  <option>Mắt</option>
+                  <option>Tiêu hóa</option>
+                  <option>Thần kinh</option>
+                  <option>Nội tiết</option>
+                  <option>Răng hàm mặt</option>
+                  <option>Hô hấp</option>
+                  <option>Thận – tiết niệu</option>
+                </select>
+              </label>
+              <label>Bác sĩ phụ trách
+                <select name="doctor" required>
+                  <option value="">Đang tải danh sách bác sĩ…</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>Ngày khám <input name="date" type="date" required></label>
+              <label>Khung giờ
+                <select name="time" required>
+                  <option value="">Chọn khung giờ</option>
+                  <option>07:30 — 09:00</option>
+                  <option>09:00 — 11:00</option>
+                  <option>13:30 — 15:30</option>
+                  <option>15:30 — 20:00</option>
+                </select>
+              </label>
+            </div>
+
             <fieldset class="billing-fieldset" data-service-picker>
-              <legend>Dịch vụ khám</legend>
+              <legend>Dịch vụ khám &amp; Bảng giá (<span id="service-tier-heading">Bình dân</span>)</legend>
               <div class="service-offer" id="first-visit-offer">Đang tải ưu đãi…</div>
               <div class="service-options" id="service-options"><p class="billing-hint">Đang tải danh sách dịch vụ…</p></div>
               <div class="service-total"><span>Tạm tính theo giá niêm yết</span><strong id="service-estimate">0 đ</strong></div>
-              <p class="billing-hint">Số tiền cuối cùng và ưu đãi được tính khi bạn gửi yêu cầu, bạn sẽ thấy trong hóa đơn.</p>
+              <p class="billing-hint">Số tiền cuối cùng và ưu đãi được tính ở máy chủ khi bạn gửi yêu cầu.</p>
             </fieldset>
+
             <fieldset class="billing-fieldset">
               <legend>Hình thức thanh toán</legend>
               <div class="pay-options">
@@ -57,12 +127,21 @@
                 <label class="pay-option"><input type="radio" name="paymentMethod" value="cash"><span><strong>Thanh toán tại quầy</strong><small>Thanh toán khi đến khám bằng tiền mặt hoặc thẻ.</small></span></label>
               </div>
             </fieldset>
+
             <label>Ghi chú thêm <textarea name="note" rows="4" placeholder="Triệu chứng hoặc điều bạn muốn chia sẻ..."></textarea></label>
             <button class="button button-dark button-full" type="submit">Gửi yêu cầu đặt lịch <span>→</span></button>
             <p class="form-note">Thông tin của bạn được bảo mật và chỉ dùng để điều phối lịch hẹn.</p>
           </form>
         </div>
-        <aside class="booking-side"><span class="eyebrow light"><span class="eyebrow-line"></span> Lộc Khang Clinic</span><h2>Đúng chuyên khoa.<br>Đúng thời điểm.</h2><p>Chúng tôi giúp bạn tiết kiệm thời gian để tập trung vào điều quan trọng nhất: sức khỏe.</p><div class="booking-check"><span>✓</span><div><strong>Xác nhận lịch hẹn</strong><small>Điều phối viên liên hệ qua số điện thoại bạn cung cấp</small></div></div><div class="booking-check"><span>✓</span><div><strong>Chọn cơ sở thuận tiện</strong><small>Gợi ý dựa trên GPS sau khi bạn cho phép hoặc tỉnh/thành tự chọn</small></div></div><div class="booking-check"><span>✓</span><div><strong>Địa điểm mẫu</strong><small>Vui lòng xác minh địa chỉ trước khi đến khám</small></div></div></aside>
+
+        <aside class="booking-side">
+          <span class="eyebrow light"><span class="eyebrow-line"></span> Lộc Khang Clinic</span>
+          <h2>Đúng chuyên khoa.<br>Đúng chuyên gia.</h2>
+          <p>Dù bạn chọn theo bệnh lý hay chọn bác sĩ trước, hệ thống luôn ghép đúng chuyên khoa và hạng dịch vụ phù hợp.</p>
+          <div class="booking-check"><span>✓</span><div><strong>Dịch vụ thường (Bình dân)</strong><small>Bác sĩ chuyên khoa trực tiếp thăm khám, chi phí tối ưu</small></div></div>
+          <div class="booking-check"><span>✓</span><div><strong>Dịch vụ cao cấp (Chuyên gia)</strong><small>Giáo sư, Phó Giáo sư, Tiến sĩ trực tiếp khám &amp; tư vấn sâu</small></div></div>
+          <div class="booking-check"><span>✓</span><div><strong>Bệnh nào — Bác sĩ khoa đó</strong><small>Tự động liên kết bệnh lý, chuyên khoa và danh sách bác sĩ</small></div></div>
+        </aside>
       </div>
     </div>
   </main>
