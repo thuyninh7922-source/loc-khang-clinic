@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const locations = require('../data/locations.json');
-const { distanceKm, nearestLocation } = require('../location-utils');
+const { distanceKm, nearestLocation } = require('../public/location-utils');
 
 test('sample locations cover northern, central, and southern Vietnam with unique IDs', () => {
   assert.equal(locations.length, 7);
