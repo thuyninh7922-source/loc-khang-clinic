@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const { rateLimit } = require('express-rate-limit');
 const { pool, runMigrations, bootstrapAdmin } = require('./db');
 const locations = require('./data/locations.json');
+const billing = require('./lib/billing');
 const {
   normalizeEmail,
   isValidEmail,
@@ -82,6 +83,7 @@ const pages = {
   '/login': 'login.html',
   '/register': 'register.html',
   '/patient': 'patient.html',
+  '/invoice': 'invoice.html',
 };
 for (const [route, file] of Object.entries(pages)) {
   app.get(route, (req, res) => res.sendFile(path.join(root, file)));
@@ -206,6 +208,11 @@ app.get('/api/locations', (_req, res) => {
   res.json({ locations });
 });
 
+app.get('/api/services', (_req, res) => {
+  res.set('Cache-Control', 'public, max-age=300');
+  res.json(billing.publicCatalog());
+});
+
 app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   const data = {
     fullName: inputString(req.body.fullName, 120),
@@ -221,20 +228,43 @@ app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   if (validationError) return fail(res, 400, validationError);
   const location = locations.find((item) => item.id === data.locationId);
   if (!location) return fail(res, 400, 'Vui lòng chọn một cơ sở trong danh sách.');
+  const serviceIds = Array.isArray(req.body.serviceIds)
+    ? req.body.serviceIds.filter((value) => typeof value === 'string').map((value) => value.slice(0, 64))
+    : [];
+  const paymentMethod = ['cash', 'transfer'].includes(req.body.paymentMethod) ? req.body.paymentMethod : '';
+  if (!paymentMethod) return fail(res, 400, 'Vui lòng chọn hình thức thanh toán.');
+  // Khám lần đầu: số điện thoại chưa từng có lịch hẹn nào chưa bị hủy.
+  const previous = await pool.query(
+    "SELECT 1 FROM clinic_appointments WHERE phone = $1 AND status <> 'cancelled' LIMIT 1",
+    [data.phone],
+  );
+  const isFirstVisit = previous.rowCount === 0;
+  const quote = billing.computeQuote(serviceIds, isFirstVisit);
+  if (quote.error) return fail(res, 400, quote.error);
+  const invoiceToken = billing.newInvoiceToken();
   const patient = currentUser(req)?.role === 'patient' ? currentUser(req) : null;
   const id = crypto.randomUUID();
   const publicCode = `LK-${Date.now().toString(36).toUpperCase()}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
   const result = await pool.query(
     `INSERT INTO clinic_appointments
       (id, public_code, patient_id, full_name, phone, specialty, doctor, appointment_date, appointment_time, note,
-       location_id, location_name, location_city, location_address)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+       location_id, location_name, location_city, location_address,
+       billing, subtotal_vnd, discount_vnd, total_vnd, is_first_visit, payment_method, payment_status, invoice_token)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,
+       $15::jsonb, $16, $17, $18, $19, $20, 'unpaid', $21)
      RETURNING id, public_code, full_name, phone, specialty, doctor, appointment_date, appointment_time, note,
-       location_id, location_name, location_city, location_address, status, created_at`,
+       location_id, location_name, location_city, location_address, status, created_at,
+       subtotal_vnd, discount_vnd, total_vnd, is_first_visit, payment_method, payment_status`,
     [id, publicCode, patient?.id || null, data.fullName, data.phone, data.specialty, data.doctor, data.date, data.time,
-      data.note || null, location.id, location.name, location.city, location.address],
+      data.note || null, location.id, location.name, location.city, location.address,
+      JSON.stringify({ items: quote.items, discounts: quote.discounts }), quote.subtotal, quote.discount, quote.total,
+      isFirstVisit, paymentMethod, invoiceToken],
   );
-  res.status(201).json({ appointment: result.rows[0] });
+  const appointment = result.rows[0];
+  res.status(201).json({
+    appointment,
+    invoiceUrl: `/invoice?code=${encodeURIComponent(appointment.public_code)}&t=${invoiceToken}`,
+  });
 }));
 
 app.get('/api/appointments', requireUser, asyncRoute(async (req, res) => {
@@ -243,7 +273,8 @@ app.get('/api/appointments', requireUser, asyncRoute(async (req, res) => {
     const [appointments, totals] = await Promise.all([
       pool.query(
         `SELECT id, public_code, patient_id, full_name, phone, specialty, doctor, appointment_date, appointment_time, note,
-                location_id, location_name, location_city, location_address, status, created_at
+                location_id, location_name, location_city, location_address, status, created_at,
+                total_vnd, is_first_visit, payment_method, payment_status
          FROM clinic_appointments ORDER BY created_at DESC LIMIT 200`,
       ),
       pool.query(
@@ -255,11 +286,50 @@ app.get('/api/appointments', requireUser, asyncRoute(async (req, res) => {
   }
   const result = await pool.query(
     `SELECT id, public_code, full_name, specialty, doctor, appointment_date, appointment_time,
-            location_id, location_name, location_city, location_address, status, created_at
+            location_id, location_name, location_city, location_address, status, created_at,
+            total_vnd, is_first_visit, payment_method, payment_status
      FROM clinic_appointments WHERE patient_id = $1 ORDER BY created_at DESC LIMIT 100`,
     [user.id],
   );
   res.json({ appointments: result.rows });
+}));
+
+app.get('/api/invoices/:code', asyncRoute(async (req, res) => {
+  const code = inputString(req.params.code, 64);
+  const result = await pool.query(
+    `SELECT public_code, patient_id, full_name, phone, specialty, doctor, appointment_date, appointment_time,
+            location_name, location_city, location_address, status, created_at,
+            billing, subtotal_vnd, discount_vnd, total_vnd, is_first_visit, payment_method, payment_status, paid_at, invoice_token
+     FROM clinic_appointments WHERE public_code = $1 LIMIT 1`,
+    [code],
+  );
+  const row = result.rows[0];
+  const user = currentUser(req);
+  const allowed = row && (
+    user?.role === 'admin'
+    || (user?.role === 'patient' && row.patient_id && String(row.patient_id) === String(user.id))
+    || billing.tokensMatch(row.invoice_token, inputString(req.query.t, 128))
+  );
+  res.set('Cache-Control', 'no-store');
+  if (!allowed) return fail(res, 404, 'Không tìm thấy hóa đơn.');
+  const { invoice_token: _token, patient_id: _patientId, ...invoice } = row;
+  invoice.payment = row.payment_method === 'transfer' && row.payment_status !== 'paid' && row.total_vnd > 0
+    ? billing.paymentInfo(row.public_code, row.total_vnd)
+    : null;
+  res.json({ invoice });
+}));
+
+app.patch('/api/admin/appointments/:id/payment', requireAdmin, verifySameOrigin, asyncRoute(async (req, res) => {
+  const paymentStatus = req.body.paymentStatus;
+  if (!['paid', 'unpaid'].includes(paymentStatus)) return fail(res, 400, 'Trạng thái thanh toán không hợp lệ.');
+  const result = await pool.query(
+    `UPDATE clinic_appointments
+     SET payment_status = $1::text, paid_at = CASE WHEN $1::text = 'paid' THEN NOW() ELSE NULL END, updated_at = NOW()
+     WHERE id = $2 RETURNING id, public_code, payment_status`,
+    [paymentStatus, req.params.id],
+  );
+  if (!result.rowCount) return fail(res, 404, 'Không tìm thấy lịch hẹn.');
+  res.json({ appointment: result.rows[0] });
 }));
 
 app.patch('/api/admin/appointments/:id', requireAdmin, verifySameOrigin, asyncRoute(async (req, res) => {

@@ -1,0 +1,70 @@
+/* Chọn dịch vụ, hình thức thanh toán và hóa đơn đặt lịch */
+.billing-fieldset { margin: 4px 0 18px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #fbfcfa; min-width: 0; }
+.billing-fieldset legend { padding: 0 8px; color: var(--teal); font-size: 12px; font-weight: 800; }
+.service-offer { margin: 0 0 12px; padding: 10px 12px; color: #536f68; border-radius: 9px; background: #e8f1ed; font-size: 11px; line-height: 1.55; }
+.service-offer strong { color: var(--teal); }
+.service-options { display: grid; gap: 8px; }
+.service-option, .pay-option { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; margin: 0; padding: 11px 13px; color: var(--ink); border: 1px solid var(--line); border-radius: 11px; background: #fff; font-size: 12px; font-weight: 400; cursor: pointer; transition: border-color .2s, background .2s; }
+.service-option:hover, .pay-option:hover { border-color: var(--teal); }
+.service-option:has(input:checked), .pay-option:has(input:checked) { border-color: var(--teal); background: #f0f7f3; }
+.service-option input, .pay-option input { display: inline-block; width: 17px; height: 17px; margin: 0; padding: 0; accent-color: var(--teal); }
+.service-option span, .pay-option span { display: grid; gap: 2px; min-width: 0; }
+.service-option strong, .pay-option strong { font-size: 12px; }
+.service-option small, .pay-option small { color: var(--ink-soft); font-size: 10px; font-weight: 400; }
+.service-option em { color: var(--teal); font-style: normal; font-size: 12px; font-weight: 800; white-space: nowrap; }
+.pay-option { grid-template-columns: auto 1fr; }
+.pay-options { display: grid; gap: 8px; }
+.service-total { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 12px; color: var(--ink-soft); }
+.service-total strong { color: var(--teal); font-size: 17px; font-family: "Plus Jakarta Sans", sans-serif; letter-spacing: -.04em; }
+.billing-hint { margin: 8px 0 0; color: #82928e; font-size: 10px; }
+
+.cell-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.cell-actions .ghost-button, .cell-actions .button { padding: 7px 11px; font-size: 10px; }
+.money-cell small { display: block; margin-top: 2px; color: var(--ink-soft); }
+
+/* Hóa đơn */
+.invoice-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.invoice { max-width: 820px; margin: 0 auto; padding: 38px; border: 1px solid var(--line); border-radius: 22px; background: #fff; box-shadow: var(--shadow); }
+.invoice-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding-bottom: 22px; border-bottom: 2px solid var(--teal); }
+.invoice-brand strong { display: block; font: 800 22px "Plus Jakarta Sans", sans-serif; letter-spacing: -.05em; }
+.invoice-brand small { color: var(--ink-soft); font-size: 11px; }
+.invoice-title { text-align: right; }
+.invoice-title h1 { margin: 0; color: var(--teal); font: 800 19px "Plus Jakarta Sans", sans-serif; letter-spacing: -.04em; }
+.invoice-title p { margin: 5px 0 0; color: var(--ink-soft); font-size: 11px; }
+.invoice-title .invoice-code { color: var(--ink); font-size: 13px; font-weight: 800; letter-spacing: .04em; }
+.invoice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 22px 0; }
+.invoice-grid h3 { margin: 0 0 7px; color: #91a49e; text-transform: uppercase; letter-spacing: .13em; font: 800 9px "DM Sans", sans-serif; }
+.invoice-grid p { margin: 0 0 3px; font-size: 12px; line-height: 1.5; }
+.invoice-grid p.muted { color: var(--ink-soft); font-size: 11px; }
+.invoice-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.invoice-table th { padding: 10px 8px; color: #91a49e; text-align: left; text-transform: uppercase; letter-spacing: .12em; font-size: 9px; border-bottom: 1px solid var(--line); }
+.invoice-table td { padding: 12px 8px; border-bottom: 1px solid #edf2ef; }
+.invoice-table th:last-child, .invoice-table td:last-child { text-align: right; white-space: nowrap; }
+.invoice-table .gift-tag { display: inline-block; margin-left: 7px; padding: 2px 7px; color: #5f7b69; border-radius: 999px; background: #e2f2e1; font-size: 9px; font-weight: 800; }
+.invoice-totals { width: min(100%, 340px); margin: 16px 0 0 auto; font-size: 12px; }
+.invoice-totals div { display: flex; justify-content: space-between; gap: 14px; padding: 6px 0; }
+.invoice-totals .discount { color: #5f7b69; }
+.invoice-totals .grand { margin-top: 6px; padding-top: 12px; border-top: 2px solid var(--teal); font: 800 18px "Plus Jakarta Sans", sans-serif; letter-spacing: -.04em; color: var(--teal); }
+.invoice-pay { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; margin-top: 26px; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: #f4f8f5; }
+.invoice-pay.no-qr { grid-template-columns: 1fr; }
+.invoice-pay img { display: block; width: 168px; height: auto; border-radius: 10px; background: #fff; }
+.invoice-pay h3 { margin: 0 0 8px; font-size: 14px; }
+.invoice-pay p { margin: 0 0 4px; color: var(--ink-soft); font-size: 11px; line-height: 1.55; }
+.invoice-pay strong { color: var(--ink); }
+.invoice-note { margin: 22px 0 0; color: #87684b; font-size: 10px; line-height: 1.6; }
+
+@media (max-width: 720px) {
+  .invoice { padding: 22px 16px; }
+  .invoice-head { flex-direction: column; }
+  .invoice-title { text-align: left; }
+  .invoice-grid { grid-template-columns: 1fr; gap: 14px; }
+  .invoice-pay { grid-template-columns: 1fr; justify-items: start; }
+  .service-option { grid-template-columns: auto 1fr; }
+  .service-option em { grid-column: 2; }
+}
+@media print {
+  .no-print, .site-header, .site-footer, .announcement { display: none !important; }
+  body, .page-main { background: #fff !important; padding: 0 !important; min-height: 0 !important; }
+  .container { width: 100% !important; }
+  .invoice { max-width: none; padding: 0; border: 0; box-shadow: none; }
+}

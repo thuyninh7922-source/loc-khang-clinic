@@ -1,0 +1,19 @@
+{
+  "note": "Gia mau de minh hoa. Hay sua gia (VND) theo bang gia that cua phong kham.",
+  "services": [
+    { "id": "svc-noi-tong-quat", "name": "Khám nội tổng quát", "price": 200000, "specialty": "Nội tổng quát", "description": "Khám lâm sàng và tư vấn hướng điều trị." },
+    { "id": "svc-tim-mach", "name": "Khám tim mạch", "price": 350000, "specialty": "Tim mạch", "description": "Khám chuyên khoa kèm đo điện tâm đồ." },
+    { "id": "svc-nhi-khoa", "name": "Khám nhi khoa", "price": 180000, "specialty": "Nhi khoa", "description": "Khám và theo dõi sức khỏe cho trẻ em." },
+    { "id": "svc-san-phu-khoa", "name": "Khám sản phụ khoa", "price": 250000, "specialty": "Sản phụ khoa", "description": "Khám và tư vấn sức khỏe phụ nữ." },
+    { "id": "svc-co-xuong-khop", "name": "Khám cơ xương khớp", "price": 250000, "specialty": "Cơ xương khớp", "description": "Khám, đánh giá vận động và tư vấn điều trị." },
+    { "id": "svc-da-lieu", "name": "Khám da liễu", "price": 220000, "specialty": "Da liễu", "description": "Khám và tư vấn các vấn đề về da." },
+    { "id": "svc-xet-nghiem-mau", "name": "Gói xét nghiệm máu cơ bản", "price": 300000, "specialty": "", "description": "Công thức máu, đường huyết, mỡ máu cơ bản." },
+    { "id": "svc-sieu-am-o-bung", "name": "Siêu âm ổ bụng", "price": 150000, "specialty": "", "description": "Siêu âm tổng quát vùng bụng." },
+    { "id": "svc-tu-van-dinh-duong", "name": "Tư vấn dinh dưỡng", "price": 100000, "specialty": "", "description": "Tư vấn chế độ ăn phù hợp với tình trạng sức khỏe." }
+  ],
+  "firstVisit": {
+    "percent": 20,
+    "maxDiscount": 200000,
+    "giftServiceId": "svc-tu-van-dinh-duong"
+  }
+}

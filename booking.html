@@ -8,6 +8,7 @@
   <title>Đặt lịch khám — Lộc Khang Clinic</title>
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/pages.css">
+  <link rel="stylesheet" href="/billing.css">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -28,7 +29,7 @@
       <div class="booking-layout">
         <div class="booking-card">
           <form id="portal-booking-form" class="booking-form">
-            <div class="form-heading"><div><span class="mini-label">Đặt lịch trực tuyến</span><h3>Bắt đầu từ hôm nay</h3></div><span class="form-badge">Miễn phí</span></div>
+            <div class="form-heading"><div><span class="mini-label">Đặt lịch trực tuyến</span><h3>Bắt đầu từ hôm nay</h3></div><span class="form-badge">Ưu đãi khám lần đầu</span></div>
             <div class="form-row"><label>Họ và tên <input name="fullName" autocomplete="name" placeholder="Nguyễn Văn An" required></label><label>Số điện thoại <input name="phone" type="tel" autocomplete="tel" pattern="[0-9+ ()-]{9,}" placeholder="090 123 4567" required></label></div>
             <div class="location-picker" data-location-picker>
               <div class="location-picker-heading"><strong>Cơ sở khám</strong><a href="/locations">Xem bản đồ các điểm mẫu ↗</a></div>
@@ -42,6 +43,20 @@
             </div>
             <div class="form-row"><label>Chuyên khoa <select name="specialty" required><option value="">Chọn chuyên khoa</option><option>Nội tổng quát</option><option>Tim mạch</option><option>Nhi khoa</option><option>Sản phụ khoa</option><option>Cơ xương khớp</option><option>Da liễu</option></select></label><label>Bác sĩ mong muốn <select name="doctor" required><option value="">Chọn bác sĩ</option><option>BS. Nguyễn Minh An</option><option>BS. Trần Hoài Thương</option><option>PGS.TS. Lê Quang Vũ</option></select></label></div>
             <div class="form-row"><label>Ngày khám <input name="date" type="date" required></label><label>Khung giờ <select name="time" required><option value="">Chọn khung giờ</option><option>07:30 — 09:00</option><option>09:00 — 11:00</option><option>13:30 — 15:30</option><option>15:30 — 20:00</option></select></label></div>
+            <fieldset class="billing-fieldset" data-service-picker>
+              <legend>Dịch vụ khám</legend>
+              <div class="service-offer" id="first-visit-offer">Đang tải ưu đãi…</div>
+              <div class="service-options" id="service-options"><p class="billing-hint">Đang tải danh sách dịch vụ…</p></div>
+              <div class="service-total"><span>Tạm tính theo giá niêm yết</span><strong id="service-estimate">0 đ</strong></div>
+              <p class="billing-hint">Số tiền cuối cùng và ưu đãi được tính khi bạn gửi yêu cầu, bạn sẽ thấy trong hóa đơn.</p>
+            </fieldset>
+            <fieldset class="billing-fieldset">
+              <legend>Hình thức thanh toán</legend>
+              <div class="pay-options">
+                <label class="pay-option"><input type="radio" name="paymentMethod" value="transfer" checked><span><strong>Chuyển khoản qua mã QR</strong><small>Mã QR hiện trong hóa đơn sau khi bạn gửi yêu cầu.</small></span></label>
+                <label class="pay-option"><input type="radio" name="paymentMethod" value="cash"><span><strong>Thanh toán tại quầy</strong><small>Thanh toán khi đến khám bằng tiền mặt hoặc thẻ.</small></span></label>
+              </div>
+            </fieldset>
             <label>Ghi chú thêm <textarea name="note" rows="4" placeholder="Triệu chứng hoặc điều bạn muốn chia sẻ..."></textarea></label>
             <button class="button button-dark button-full" type="submit">Gửi yêu cầu đặt lịch <span>→</span></button>
             <p class="form-note">Thông tin của bạn được bảo mật và chỉ dùng để điều phối lịch hẹn.</p>

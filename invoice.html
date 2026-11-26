@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Hóa đơn đặt lịch — Lộc Khang Clinic</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/pages.css">
+  <link rel="stylesheet" href="/billing.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header no-print">
+    <div class="container nav-wrap">
+      <a class="brand" href="/" aria-label="Lộc Khang Clinic - Trang chủ"><span class="brand-mark"><span></span><i></i></span><span><strong>Lộc Khang</strong><small>CLINIC</small></span></a>
+      <nav class="main-nav" aria-label="Điều hướng chính"><a href="/">Trang chủ</a><a href="/booking">Đặt lịch khám</a><a href="/patient">Hồ sơ của tôi</a></nav>
+    </div>
+  </header>
+  <main class="page-main">
+    <div class="container">
+      <div class="invoice-actions no-print">
+        <button class="button button-dark" id="invoice-print" type="button">In hoặc lưu PDF <span>↓</span></button>
+        <a class="ghost-button" href="/booking">Đặt lịch khác</a>
+        <a class="ghost-button" href="/">Về trang chủ</a>
+      </div>
+      <article class="invoice" id="invoice" aria-live="polite"><div class="empty-state">Đang tải hóa đơn…</div></article>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="container footer-bottom"><span>© 2026 Lộc Khang Clinic</span><span>1900 6868 · hello@lockhang.clinic</span></div></footer>
+  <script src="/invoice.js"></script>
+</body>
+</html>

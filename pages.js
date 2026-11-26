@@ -150,6 +150,53 @@ function formatDate(value) {
   const date = new Date(`${String(value).slice(0, 10)}T00:00:00`);
   return Number.isNaN(date.getTime()) ? String(value) : new Intl.DateTimeFormat('vi-VN').format(date);
 }
+function formatMoney(value) {
+  if (value === null || value === undefined || value === '') return '—';
+  const number = Number(value);
+  return Number.isFinite(number) ? `${new Intl.NumberFormat('vi-VN').format(number)} đ` : '—';
+}
+function paymentMethodLabel(method) {
+  return ({ cash: 'Tại quầy', transfer: 'Chuyển khoản' })[method] || '—';
+}
+function paymentStateLabel(item) {
+  if (item.total_vnd === null || item.total_vnd === undefined) return '—';
+  if (Number(item.total_vnd) === 0) return 'Miễn phí';
+  return item.payment_status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán';
+}
+function paymentCell(item, withActions) {
+  const cell = document.createElement('td');
+  if (item.total_vnd === null || item.total_vnd === undefined) {
+    cell.textContent = '—';
+    return cell;
+  }
+  const total = document.createElement('strong');
+  total.textContent = formatMoney(item.total_vnd);
+  const meta = document.createElement('small');
+  meta.textContent = `${paymentMethodLabel(item.payment_method)}${item.is_first_visit ? ' · Khám lần đầu' : ''}`;
+  const settled = Number(item.total_vnd) === 0 || item.payment_status === 'paid';
+  const pill = document.createElement('span');
+  pill.className = `status-pill${settled ? '' : ' pending'}`;
+  pill.textContent = paymentStateLabel(item);
+  cell.append(total, document.createElement('br'), meta, document.createElement('br'), pill);
+  const actions = document.createElement('div');
+  actions.className = 'cell-actions';
+  if (withActions && !settled) {
+    actions.appendChild(makeActionButton('Đã nhận tiền', 'ghost-button', { id: item.id }, async () => {
+      try {
+        await api.patch(`/api/admin/appointments/${encodeURIComponent(item.id)}/payment`, { paymentStatus: 'paid' });
+        showToast('Đã ghi nhận thanh toán', item.public_code);
+        loadAdminPage();
+      } catch (error) { showToast('Chưa cập nhật được thanh toán', error.message); }
+    }));
+  }
+  const link = document.createElement('a');
+  link.className = 'ghost-button';
+  link.href = `/invoice?code=${encodeURIComponent(item.public_code)}`;
+  link.textContent = 'Hóa đơn';
+  actions.appendChild(link);
+  cell.appendChild(actions);
+  return cell;
+}
 function makeActionButton(label, className, dataset, handler) {
   const button = document.createElement('button');
   button.type = 'button';
@@ -160,22 +207,90 @@ function makeActionButton(label, className, dataset, handler) {
   return button;
 }
 
+async function initServicePicker(form) {
+  const box = form.querySelector('#service-options');
+  if (!box) return;
+  const offerBox = form.querySelector('#first-visit-offer');
+  const estimate = form.querySelector('#service-estimate');
+  let catalog;
+  try {
+    catalog = await api.get('/api/services');
+  } catch (error) {
+    box.textContent = 'Không tải được danh sách dịch vụ. Vui lòng tải lại trang.';
+    if (offerBox) offerBox.textContent = '';
+    return;
+  }
+  const refresh = () => {
+    const sum = [...form.querySelectorAll('input[name="serviceIds"]:checked')].reduce((total, input) => total + Number(input.dataset.price || 0), 0);
+    if (estimate) estimate.textContent = formatMoney(sum);
+  };
+  const options = catalog.services.map((service) => {
+    const label = document.createElement('label');
+    label.className = 'service-option';
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.name = 'serviceIds';
+    input.value = service.id;
+    input.dataset.price = String(service.price);
+    input.addEventListener('change', refresh);
+    const text = document.createElement('span');
+    const name = document.createElement('strong');
+    name.textContent = service.name;
+    const note = document.createElement('small');
+    note.textContent = service.description;
+    text.append(name, note);
+    const price = document.createElement('em');
+    price.textContent = formatMoney(service.price);
+    label.append(input, text, price);
+    return label;
+  });
+  box.replaceChildren(...options);
+  if (offerBox) {
+    const offer = catalog.firstVisit || {};
+    const parts = [];
+    if (offer.percent) parts.push(`giảm ${offer.percent}%${offer.maxDiscount ? ` (tối đa ${formatMoney(offer.maxDiscount)})` : ''} dịch vụ khám`);
+    if (offer.gift) parts.push(`tặng ${offer.gift.name} (trị giá ${formatMoney(offer.gift.price)})`);
+    offerBox.textContent = parts.length
+      ? `Ưu đãi khám lần đầu: ${parts.join(' và ')}. Ưu đãi tự động áp dụng nếu số điện thoại của bạn chưa từng đặt lịch tại phòng khám.`
+      : '';
+    offerBox.hidden = !parts.length;
+  }
+  // Chọn sẵn dịch vụ khám theo chuyên khoa nếu chưa chọn gì.
+  form.querySelector('[name="specialty"]')?.addEventListener('change', (event) => {
+    if (form.querySelector('input[name="serviceIds"]:checked')) return;
+    const match = catalog.services.find((service) => service.specialty && service.specialty === event.target.value);
+    const input = match && form.querySelector(`input[name="serviceIds"][value="${CSS.escape(match.id)}"]`);
+    if (input) { input.checked = true; refresh(); }
+  });
+  refresh();
+}
+
 const bookingForm = document.querySelector('#portal-booking-form');
 if (bookingForm) {
   setDateMinimum();
+  initServicePicker(bookingForm);
   bookingForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const submit = bookingForm.querySelector('[type="submit"]');
     submit.disabled = true;
+    let redirecting = false;
     try {
-      const { appointment } = await api.post('/api/appointments', formData(bookingForm));
-      bookingForm.reset();
-      setDateMinimum();
-      showToast(`Đã nhận yêu cầu ${appointment.public_code}`, 'Điều phối viên sẽ gọi lại để xác nhận lịch hẹn.');
+      const payload = formData(bookingForm);
+      payload.serviceIds = [...bookingForm.querySelectorAll('input[name="serviceIds"]:checked')].map((input) => input.value);
+      if (!payload.serviceIds.length) throw new Error('Vui lòng chọn ít nhất một dịch vụ khám.');
+      const { appointment, invoiceUrl } = await api.post('/api/appointments', payload);
+      showToast(`Đã nhận yêu cầu ${appointment.public_code}`, 'Đang mở hóa đơn đặt lịch của bạn.');
+      if (invoiceUrl) {
+        redirecting = true;
+        setTimeout(() => { window.location.assign(invoiceUrl); }, 900);
+      } else {
+        bookingForm.reset();
+        setDateMinimum();
+      }
     } catch (error) {
       showToast('Chưa gửi được yêu cầu', error.message);
     } finally {
-      submit.disabled = false;
+      if (!redirecting) submit.disabled = false;
     }
   });
 }
@@ -234,7 +349,7 @@ async function loadPatientPage() {
     const body = document.querySelector('#patient-appointment-table tbody');
     const count = document.querySelector('[data-patient-appointments]');
     if (count) count.textContent = String(appointments.length);
-    if (!appointments.length) return renderEmpty(body, 5, 'Bạn chưa có lịch hẹn. Hãy đặt lịch khám đầu tiên của mình.');
+    if (!appointments.length) return renderEmpty(body, 6, 'Bạn chưa có lịch hẹn. Hãy đặt lịch khám đầu tiên của mình.');
     const fragment = document.createDocumentFragment();
     appointments.forEach((item) => {
       const row = document.createElement('tr');
@@ -243,6 +358,7 @@ async function loadPatientPage() {
       appendStackCell(row, formatDate(item.appointment_date), item.appointment_time);
       appendStackCell(row, item.location_name, [item.location_city, item.location_address].filter(Boolean).join(' · '));
       addStatusCell(row, item.status);
+      row.appendChild(paymentCell(item, false));
       fragment.appendChild(row);
     });
     body.replaceChildren(fragment);
@@ -275,7 +391,7 @@ async function loadAdminPage() {
 }
 
 function renderAdminAppointments(body, appointments) {
-  if (!appointments.length) return renderEmpty(body, 7, 'Chưa có lịch hẹn mới. Các yêu cầu đặt lịch sẽ hiển thị tại đây.');
+  if (!appointments.length) return renderEmpty(body, 8, 'Chưa có lịch hẹn mới. Các yêu cầu đặt lịch sẽ hiển thị tại đây.');
   const fragment = document.createDocumentFragment();
   appointments.forEach((item) => {
     const row = document.createElement('tr');
@@ -284,6 +400,7 @@ function renderAdminAppointments(body, appointments) {
     appendStackCell(row, formatDate(item.appointment_date), item.appointment_time);
     appendStackCell(row, item.location_name, [item.location_city, item.location_address].filter(Boolean).join(' · '));
     appendCell(row, item.phone);
+    row.appendChild(paymentCell(item, true));
     addStatusCell(row, item.status);
     const action = document.createElement('td');
     if (item.status === 'pending') {
