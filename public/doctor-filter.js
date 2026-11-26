@@ -4,17 +4,22 @@
     var specialty = form.querySelector('select[name="specialty"]');
     var doctor = form.querySelector('select[name="doctor"]');
     if (!specialty || !doctor) return;
-    var options = Array.prototype.slice.call(doctor.options);
+    var allOptions = Array.prototype.slice.call(doctor.options).map(function (opt) {
+      return opt.cloneNode(true);
+    });
     function apply() {
       var value = specialty.value;
-      options.forEach(function (option) {
-        if (!option.value) return;
-        var show = !value || option.dataset.specialty === value;
-        option.hidden = !show;
-        option.disabled = !show;
+      var previous = doctor.value;
+      doctor.replaceChildren();
+      allOptions.forEach(function (opt) {
+        if (!opt.value || !value || opt.dataset.specialty === value) {
+          doctor.appendChild(opt.cloneNode(true));
+        }
       });
-      var current = doctor.selectedOptions[0];
-      if (current && current.disabled) doctor.value = '';
+      var stillValid = Array.prototype.some.call(doctor.options, function (opt) {
+        return opt.value === previous;
+      });
+      doctor.value = stillValid ? previous : '';
     }
     specialty.addEventListener('change', apply);
     apply();
