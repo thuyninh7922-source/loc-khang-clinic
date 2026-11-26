@@ -2,7 +2,6 @@
   const utils = window.LocationUtils;
   if (!utils) return;
 
-  const escapeText = (value) => String(value ?? '');
   const formatDistance = (km) => km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
   const currentUrlLocation = new URLSearchParams(window.location.search).get('location');
 
