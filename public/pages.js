@@ -129,7 +129,10 @@ function statusLabel(status) {
 function addStatusCell(row, status) {
   const cell = document.createElement('td');
   const pill = document.createElement('span');
-  pill.className = `status-pill${status === 'pending' || status === 'open' ? ' pending' : ''}`;
+  const extra = status === 'pending' || status === 'open'
+    ? ' pending'
+    : status === 'cancelled' ? ' cancelled' : '';
+  pill.className = `status-pill${extra}`;
   pill.textContent = statusLabel(status);
   cell.appendChild(pill);
   row.appendChild(cell);
@@ -415,13 +418,25 @@ function renderAdminAppointments(body, appointments) {
     addStatusCell(row, item.status);
     const action = document.createElement('td');
     if (item.status === 'pending') {
-      action.appendChild(makeActionButton('Xác nhận', 'ghost-button admin-confirm', { id: item.id }, async () => {
-        try {
-          await api.patch(`/api/admin/appointments/${encodeURIComponent(item.id)}`, { status: 'confirmed' });
-          showToast('Đã xác nhận lịch hẹn', item.public_code);
-          loadAdminPage();
-        } catch (error) { showToast('Chưa cập nhật được lịch hẹn', error.message); }
-      }));
+      const actions = document.createElement('div');
+      actions.className = 'cell-actions';
+      actions.append(
+        makeActionButton('Xác nhận', 'ghost-button admin-confirm', { id: item.id }, async () => {
+          try {
+            await api.patch(`/api/admin/appointments/${encodeURIComponent(item.id)}`, { status: 'confirmed' });
+            showToast('Đã xác nhận lịch hẹn', item.public_code);
+            loadAdminPage();
+          } catch (error) { showToast('Chưa cập nhật được lịch hẹn', error.message); }
+        }),
+        makeActionButton('Hủy', 'ghost-button', { id: item.id }, async () => {
+          try {
+            await api.patch(`/api/admin/appointments/${encodeURIComponent(item.id)}`, { status: 'cancelled' });
+            showToast('Đã hủy lịch hẹn', item.public_code);
+            loadAdminPage();
+          } catch (error) { showToast('Chưa hủy được lịch hẹn', error.message); }
+        }),
+      );
+      action.appendChild(actions);
     } else {
       action.textContent = '—';
     }
@@ -463,9 +478,13 @@ function renderContactRequests(requests) {
 if (document.querySelector('#patient-appointment-table')) loadPatientPage();
 if (document.querySelector('#appointment-table')) loadAdminPage();
 
-document.querySelector('#patient-logout, #admin-logout')?.addEventListener('click', async () => {
+document.querySelector('#patient-logout')?.addEventListener('click', async () => {
   try { await api.post('/api/auth/logout', {}); } catch (error) { showToast('Không đăng xuất được', error.message); return; }
   window.location.assign('/login');
+});
+document.querySelector('#admin-logout')?.addEventListener('click', async () => {
+  try { await api.post('/api/auth/logout', {}); } catch (error) { showToast('Không đăng xuất được', error.message); return; }
+  window.location.assign('/admin-login');
 });
 
 document.querySelector('#disease-search')?.addEventListener('input', filterDiseases);
@@ -478,8 +497,8 @@ function filterDiseases() {
   });
 }
 
-const userName = document.querySelector('[data-user-name]');
-if (userName) {
+const hasPortalLoader = Boolean(document.querySelector('#patient-appointment-table, #appointment-table'));
+if (!hasPortalLoader && document.querySelector('[data-user-name]')) {
   api.get('/api/auth/me').then(({ user }) => {
     if (user) document.querySelectorAll('[data-user-name]').forEach((node) => { node.textContent = user.fullName; });
   }).catch(() => {});
