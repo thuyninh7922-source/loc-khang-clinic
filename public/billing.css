@@ -1,4 +1,4 @@
-/* Chọn dịch vụ, hình thức thanh toán và hóa đơn đặt lịch */
+/* Chọn dịch vụ, hạng dịch vụ, hình thức thanh toán và hóa đơn đặt lịch */
 .billing-fieldset { margin: 4px 0 18px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: #fbfcfa; min-width: 0; }
 .billing-fieldset legend { padding: 0 8px; color: var(--teal); font-size: 12px; font-weight: 800; }
 .service-offer { margin: 0 0 12px; padding: 10px 12px; color: #536f68; border-radius: 9px; background: #e8f1ed; font-size: 11px; line-height: 1.55; }
@@ -14,6 +14,10 @@
 .service-option em { color: var(--teal); font-style: normal; font-size: 12px; font-weight: 800; white-space: nowrap; }
 .pay-option { grid-template-columns: auto 1fr; }
 .pay-options { display: grid; gap: 8px; }
+.tier-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tier-tag { display: inline-block; margin-left: 6px; padding: 2px 7px; border-radius: 999px; background: #e8f1ed; color: var(--teal); font-size: 9px; font-weight: 800; vertical-align: middle; }
+.tier-tag.premium { background: #fff0c9; color: #886b3b; }
+.tier-premium:has(input:checked) { border-color: #b58932; background: #fffaf0; }
 .service-total { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 12px; color: var(--ink-soft); }
 .service-total strong { color: var(--teal); font-size: 17px; font-family: "Plus Jakarta Sans", sans-serif; letter-spacing: -.04em; }
 .billing-hint { margin: 8px 0 0; color: #82928e; font-size: 10px; }
@@ -61,6 +65,9 @@
   .invoice-pay { grid-template-columns: 1fr; justify-items: start; }
   .service-option { grid-template-columns: auto 1fr; }
   .service-option em { grid-column: 2; }
+}
+@media (max-width: 640px) {
+  .tier-options { grid-template-columns: 1fr; }
 }
 @media print {
   .no-print, .site-header, .site-footer, .announcement { display: none !important; }
