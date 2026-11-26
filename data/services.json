@@ -155,6 +155,15 @@
       "description": "Khám sỏi, nhiễm trùng tiểu và bệnh thận."
     },
     {
+      "id": "svc-an-trua",
+      "name": "Suất ăn trưa dinh dưỡng tại phòng khám",
+      "price": 65000,
+      "priceStandard": 65000,
+      "pricePremium": 150000,
+      "specialty": "",
+      "description": "Cơm trưa nóng đảm bảo vệ sinh (gói Cao cấp phục vụ thực đơn riêng theo tư vấn dinh dưỡng tại phòng chờ VIP)."
+    },
+    {
       "id": "svc-hoi-chan-chuyen-gia",
       "name": "Hội chẩn chuyên sâu cùng GS / PGS.TS",
       "price": 900000,
