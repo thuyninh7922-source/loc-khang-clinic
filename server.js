@@ -12,6 +12,7 @@ const {
   normalizeEmail,
   isValidEmail,
   normalizePhone,
+  canonicalPhone,
   isValidPhone,
   validateAppointment,
   validateContactRequest,
@@ -89,13 +90,14 @@ const pages = {
 for (const [route, file] of Object.entries(pages)) {
   app.get(route, (req, res) => res.sendFile(path.join(publicDir, file)));
 }
+
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const isUuid = (value) => typeof value === 'string' && uuidPattern.test(value);
+
 const asyncRoute = (handler) => (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next);
 const fail = (res, status, error) => res.status(status).json({ error });
 const currentUser = (req) => req.session?.user || null;
 const requireUser = (req, res, next) => currentUser(req) ? next() : fail(res, 401, 'Vui lòng đăng nhập để tiếp tục.');
-const requirePatient = (req, res, next) => currentUser(req)?.role === 'patient'
-  ? next()
-  : fail(res, currentUser(req) ? 403 : 401, 'Khu vực này dành cho tài khoản bệnh nhân.');
 const requireAdmin = (req, res, next) => currentUser(req)?.role === 'admin'
   ? next()
   : fail(res, currentUser(req) ? 403 : 401, 'Bạn không có quyền truy cập khu vực quản trị.');
@@ -117,7 +119,7 @@ function verifySameOrigin(req, res, next) {
     }
   }
   const supplied = req.get('x-csrf-token');
-  if (!supplied || !req.session.csrfToken || supplied !== req.session.csrfToken) {
+  if (!billing.tokensMatch(req.session.csrfToken, supplied)) {
     return fail(res, 403, 'Phiên bảo mật đã hết hạn. Hãy tải lại trang rồi thử lại.');
   }
   next();
@@ -137,9 +139,6 @@ function safeUser(row) {
 }
 function inputString(value, maxLength) {
   return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
-}
-function requireFields(fields) {
-  return fields.every((field) => typeof field === 'string' && field.trim().length > 0);
 }
 
 app.get('/healthz', asyncRoute(async (_req, res) => {
@@ -239,10 +238,15 @@ app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   const rawMethod = req.body.paymentMethod;
   const paymentMethod = rawMethod === undefined || rawMethod === '' ? 'cash' : rawMethod;
   if (!['cash', 'transfer'].includes(paymentMethod)) return fail(res, 400, 'Hình thức thanh toán không hợp lệ.');
-  // Khám lần đầu: số điện thoại chưa từng có lịch hẹn nào chưa bị hủy.
+
+  // Khám lần đầu: chuẩn hóa số điện thoại về dạng chữ số để tránh lách ưu đãi.
+  const phoneKey = canonicalPhone(data.phone);
   const previous = await pool.query(
-    "SELECT 1 FROM clinic_appointments WHERE phone = $1 AND status <> 'cancelled' LIMIT 1",
-    [data.phone],
+    `SELECT 1 FROM clinic_appointments
+     WHERE regexp_replace(phone, '[^0-9]', '', 'g') IN ($1, regexp_replace($1, '^0', '84'))
+       AND status <> 'cancelled'
+     LIMIT 1`,
+    [phoneKey],
   );
   const isFirstVisit = previous.rowCount === 0;
   const quote = billing.computeQuote(serviceIds, isFirstVisit);
@@ -326,6 +330,7 @@ app.get('/api/invoices/:code', asyncRoute(async (req, res) => {
 }));
 
 app.patch('/api/admin/appointments/:id/payment', requireAdmin, verifySameOrigin, asyncRoute(async (req, res) => {
+  if (!isUuid(req.params.id)) return fail(res, 400, 'Mã lịch hẹn không hợp lệ.');
   const paymentStatus = req.body.paymentStatus;
   if (!['paid', 'unpaid'].includes(paymentStatus)) return fail(res, 400, 'Trạng thái thanh toán không hợp lệ.');
   const result = await pool.query(
@@ -339,6 +344,7 @@ app.patch('/api/admin/appointments/:id/payment', requireAdmin, verifySameOrigin,
 }));
 
 app.patch('/api/admin/appointments/:id', requireAdmin, verifySameOrigin, asyncRoute(async (req, res) => {
+  if (!isUuid(req.params.id)) return fail(res, 400, 'Mã lịch hẹn không hợp lệ.');
   const status = req.body.status;
   const allowed = ['confirmed', 'cancelled'];
   if (!allowed.includes(status)) return fail(res, 400, 'Trạng thái lịch hẹn không hợp lệ.');
@@ -375,7 +381,9 @@ app.get('/api/admin/contact-requests', requireAdmin, asyncRoute(async (_req, res
   );
   res.json({ requests: result.rows });
 }));
+
 app.patch('/api/admin/contact-requests/:id', requireAdmin, verifySameOrigin, asyncRoute(async (req, res) => {
+  if (!isUuid(req.params.id)) return fail(res, 400, 'Mã yêu cầu tư vấn không hợp lệ.');
   if (req.body.status !== 'resolved') return fail(res, 400, 'Trạng thái yêu cầu không hợp lệ.');
   const result = await pool.query(
     `UPDATE clinic_contact_requests SET status = 'resolved', updated_at = NOW()
