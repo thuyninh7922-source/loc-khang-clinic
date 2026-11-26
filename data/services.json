@@ -1,10 +1,12 @@
 {
-  "note": "Gia mau de minh hoa. Hay sua gia (VND) theo bang gia that cua phong kham.",
+  "note": "Gia mau 2 hang (Binh dan va Cao cap). Hay sua gia (VND) theo bang gia that cua phong kham.",
   "services": [
     {
       "id": "svc-noi-tong-quat",
       "name": "Khám nội tổng quát",
       "price": 200000,
+      "priceStandard": 200000,
+      "pricePremium": 450000,
       "specialty": "Nội tổng quát",
       "description": "Khám lâm sàng và tư vấn hướng điều trị."
     },
@@ -12,6 +14,8 @@
       "id": "svc-tim-mach",
       "name": "Khám tim mạch",
       "price": 350000,
+      "priceStandard": 350000,
+      "pricePremium": 700000,
       "specialty": "Tim mạch",
       "description": "Khám chuyên khoa kèm đo điện tâm đồ."
     },
@@ -19,6 +23,8 @@
       "id": "svc-nhi-khoa",
       "name": "Khám nhi khoa",
       "price": 180000,
+      "priceStandard": 180000,
+      "pricePremium": 400000,
       "specialty": "Nhi khoa",
       "description": "Khám và theo dõi sức khỏe cho trẻ em."
     },
@@ -26,6 +32,8 @@
       "id": "svc-san-phu-khoa",
       "name": "Khám sản phụ khoa",
       "price": 250000,
+      "priceStandard": 250000,
+      "pricePremium": 500000,
       "specialty": "Sản phụ khoa",
       "description": "Khám và tư vấn sức khỏe phụ nữ."
     },
@@ -33,6 +41,8 @@
       "id": "svc-co-xuong-khop",
       "name": "Khám cơ xương khớp",
       "price": 250000,
+      "priceStandard": 250000,
+      "pricePremium": 550000,
       "specialty": "Cơ xương khớp",
       "description": "Khám, đánh giá vận động và tư vấn điều trị."
     },
@@ -40,6 +50,8 @@
       "id": "svc-da-lieu",
       "name": "Khám da liễu",
       "price": 220000,
+      "priceStandard": 220000,
+      "pricePremium": 450000,
       "specialty": "Da liễu",
       "description": "Khám và tư vấn các vấn đề về da."
     },
@@ -47,20 +59,26 @@
       "id": "svc-xet-nghiem-mau",
       "name": "Gói xét nghiệm máu cơ bản",
       "price": 300000,
+      "priceStandard": 300000,
+      "pricePremium": 550000,
       "specialty": "",
-      "description": "Công thức máu, đường huyết, mỡ máu cơ bản."
+      "description": "Công thức máu, đường huyết, mỡ máu (gói cao cấp ưu tiên trả kết quả nhanh)."
     },
     {
       "id": "svc-sieu-am-o-bung",
       "name": "Siêu âm ổ bụng",
       "price": 150000,
+      "priceStandard": 150000,
+      "pricePremium": 300000,
       "specialty": "",
-      "description": "Siêu âm tổng quát vùng bụng."
+      "description": "Siêu âm tổng quát vùng bụng (gói cao cấp siêu âm chuyên sâu)."
     },
     {
       "id": "svc-tu-van-dinh-duong",
       "name": "Tư vấn dinh dưỡng",
       "price": 100000,
+      "priceStandard": 100000,
+      "pricePremium": 200000,
       "specialty": "",
       "description": "Tư vấn chế độ ăn phù hợp với tình trạng sức khỏe."
     },
@@ -68,6 +86,8 @@
       "id": "svc-tai-mui-hong",
       "name": "Khám tai mũi họng",
       "price": 200000,
+      "priceStandard": 200000,
+      "pricePremium": 450000,
       "specialty": "Tai mũi họng",
       "description": "Khám và tư vấn các vấn đề tai, mũi, họng."
     },
@@ -75,6 +95,8 @@
       "id": "svc-mat",
       "name": "Khám mắt",
       "price": 200000,
+      "priceStandard": 200000,
+      "pricePremium": 450000,
       "specialty": "Mắt",
       "description": "Kiểm tra thị lực và tư vấn chăm sóc mắt."
     },
@@ -82,6 +104,8 @@
       "id": "svc-tieu-hoa",
       "name": "Khám tiêu hóa",
       "price": 250000,
+      "priceStandard": 250000,
+      "pricePremium": 550000,
       "specialty": "Tiêu hóa",
       "description": "Khám dạ dày, đường ruột, gan mật và tư vấn dinh dưỡng."
     },
@@ -89,6 +113,8 @@
       "id": "svc-than-kinh",
       "name": "Khám thần kinh",
       "price": 300000,
+      "priceStandard": 300000,
+      "pricePremium": 650000,
       "specialty": "Thần kinh",
       "description": "Khám đau đầu, tê bì, rối loạn giấc ngủ."
     },
@@ -96,6 +122,8 @@
       "id": "svc-noi-tiet",
       "name": "Khám nội tiết",
       "price": 280000,
+      "priceStandard": 280000,
+      "pricePremium": 580000,
       "specialty": "Nội tiết",
       "description": "Khám tuyến giáp, đường huyết và rối loạn chuyển hóa."
     },
@@ -103,6 +131,8 @@
       "id": "svc-rang-ham-mat",
       "name": "Khám răng hàm mặt",
       "price": 150000,
+      "priceStandard": 150000,
+      "pricePremium": 380000,
       "specialty": "Răng hàm mặt",
       "description": "Khám răng miệng tổng quát và tư vấn điều trị."
     },
@@ -110,6 +140,8 @@
       "id": "svc-ho-hap",
       "name": "Khám hô hấp",
       "price": 250000,
+      "priceStandard": 250000,
+      "pricePremium": 550000,
       "specialty": "Hô hấp",
       "description": "Khám ho kéo dài, khó thở và các bệnh phổi."
     },
@@ -117,6 +149,8 @@
       "id": "svc-than-tiet-nieu",
       "name": "Khám thận – tiết niệu",
       "price": 250000,
+      "priceStandard": 250000,
+      "pricePremium": 550000,
       "specialty": "Thận – tiết niệu",
       "description": "Khám sỏi, nhiễm trùng tiểu và bệnh thận."
     }
