@@ -1,53 +1,87 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Đăng nhập quản trị — Lộc Khang Clinic</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng nhập quản trị viên — Lộc Khang Clinic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/pages.css">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="site-header">
     <div class="container nav-wrap">
-      <a class="brand" href="/"><span class="brand-mark"><span></span><i></i></span><span><strong>Lộc Khang</strong><small>CLINIC · ADMIN</small></span></a>
-      <a class="text-link" href="/login">Cổng bệnh nhân ↗</a>
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">✚</span>
+        <span class="brand-text">
+          <strong>Lộc Khang</strong>
+          <small>CLINIC</small>
+        </span>
+      </a>
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <a href="/">Trang chủ</a>
+        <a href="/doctors">Đội ngũ</a>
+        <a href="/diseases">Tra cứu bệnh lý</a>
+        <a href="/locations">Cơ sở</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="ghost-button" href="/login">Cổng bệnh nhân</a>
+        <a class="ghost-button" href="/doctor-login">Cổng bác sĩ</a>
+      </div>
     </div>
   </header>
-  <main class="page-main">
-    <div class="container login-layout">
-      <section class="login-card">
-        <span class="page-kicker">Khu vực nội bộ</span>
-        <h1>Đăng nhập<br>quản trị viên.</h1>
-        <p>Không dùng tài khoản bệnh nhân tại đây. Cổng này dành riêng cho admin và nhân sự được cấp quyền.</p>
-        <form id="admin-login-form">
-          <label>Email quản trị <input name="email" type="email" autocomplete="username" placeholder="admin@example.com" required></label>
-          <label>Mật khẩu <input name="password" type="password" autocomplete="current-password" placeholder="Mật khẩu quản trị" required></label>
-          <div class="auth-error" id="admin-login-error" aria-live="polite"></div>
-          <button class="button button-dark button-full" type="submit">Vào trang quản trị <span>→</span></button>
-          <p class="small-note">Tài khoản quản trị được tạo từ biến môi trường riêng trong Render.</p>
+
+  <main class="auth-page">
+    <div class="container auth-grid">
+      <section class="auth-card">
+        <span class="mini-label">KHU VỰC NỘI BỘ</span>
+        <h1>Đăng nhập quản trị viên.</h1>
+        <p class="muted">Không dùng tài khoản bệnh nhân tại đây. Cổng này dành riêng cho admin và nhân sự được cấp quyền.</p>
+
+        <form id="admin-login-form" class="auth-form">
+          <label>Email quản trị
+            <input name="email" type="email" autocomplete="email" placeholder="admin@lockhang.clinic" required>
+          </label>
+          <label>Mật khẩu
+            <input name="password" type="password" autocomplete="current-password" placeholder="••••••••••" required>
+          </label>
+          <p id="admin-login-error" class="form-error" role="alert"></p>
+          <button type="submit" class="button button-primary" style="width:100%;justify-content:center;">
+            Vào trang quản trị <span aria-hidden="true">→</span>
+          </button>
         </form>
+
+        <p class="muted" style="margin-top:16px;font-size:13px;text-align:center;">
+          Tài khoản quản trị được tạo từ biến môi trường riêng trong Render.
+        </p>
       </section>
-      <aside class="login-visual admin-visual">
-        <span class="eyebrow light"><span class="eyebrow-line"></span> Clinic operations</span>
-        <h2>Vận hành rõ ràng,<br><em>chăm sóc tốt hơn.</em></h2>
-        <p>Quản lý lịch hẹn và yêu cầu tư vấn trong workspace riêng của phòng khám.</p>
-        <div class="login-orbit"></div>
-        <div class="login-benefits">
-          <span><i>✓</i> Dashboard lịch hẹn</span>
-          <span><i>✓</i> Xác nhận yêu cầu bệnh nhân</span>
-          <span><i>✓</i> Không dùng chung với tài khoản bệnh nhân</span>
-        </div>
+
+      <aside class="auth-side">
+        <span class="mini-label">CLINIC OPERATIONS</span>
+        <h2>Vận hành rõ ràng,<br>chăm sóc tốt hơn.</h2>
+        <p>Quản lý lịch hẹn, yêu cầu tư vấn và cấp tài khoản bác sĩ trong workspace riêng của phòng khám.</p>
+        <ul class="auth-checklist">
+          <li>Dashboard lịch hẹn toàn chuỗi</li>
+          <li>Xác nhận yêu cầu &amp; cấp tài khoản bác sĩ</li>
+          <li>Không dùng chung với tài khoản bệnh nhân</li>
+        </ul>
       </aside>
     </div>
   </main>
+
   <footer class="site-footer">
     <div class="container footer-bottom">
-      <span>© 2026 Lộc Khang Clinic</span>
-      <span>Khu vực nội bộ</span>
+      <span>© 2026 Lộc Khang Clinic. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/login">Cổng bệnh nhân</a>
+        <a href="/doctor-login">Cổng bác sĩ</a>
+        <a href="/">Trang chủ</a>
+      </div>
     </div>
   </footer>
-  <script src="/pages.js"></script>
+
+  <script src="/pages.js?v=3" defer></script>
 </body>
 </html>
