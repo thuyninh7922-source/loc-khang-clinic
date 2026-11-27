@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Không gian làm việc Bác sĩ — Lộc Khang Clinic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/pages.css">
+  <link rel="stylesheet" href="/billing.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">✚</span>
+        <span class="brand-text">
+          <strong>Lộc Khang</strong>
+          <small>CLINIC</small>
+        </span>
+      </a>
+      <nav class="main-nav" aria-label="Điều hướng bác sĩ">
+        <a href="/">Trang chủ</a>
+        <a href="/diseases">Tra cứu bệnh lý</a>
+        <a href="/doctors">Đội ngũ</a>
+      </nav>
+      <div class="nav-actions">
+        <span class="user-badge" data-user-name>Bác sĩ</span>
+        <button type="button" class="ghost-button" id="doctor-logout">Đăng xuất</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="portal-page">
+    <div class="container">
+      <div class="portal-head">
+        <div>
+          <span class="mini-label">Cổng bác sĩ chuyên khoa</span>
+          <h1>Lịch khám phụ trách.</h1>
+          <p class="muted">
+            Bác sĩ: <strong data-user-name>—</strong> · Mã cơ sở công tác: <strong data-doctor-location>—</strong>
+          </p>
+        </div>
+        <a class="ghost-button" href="/diseases">Thư viện bệnh lý <span aria-hidden="true">↗</span></a>
+      </div>
+
+      <div class="portal-layout">
+        <aside class="portal-sidebar" aria-label="Menu bác sĩ">
+          <span class="mini-label">Doctor Workspace</span>
+          <nav class="portal-nav">
+            <a href="#doctor-schedule-section" class="is-active">Lịch khám của tôi</a>
+            <a href="/diseases">Thư viện bệnh lý</a>
+            <a href="/doctors">Danh bạ bác sĩ</a>
+            <a href="/">Về trang chủ</a>
+          </nav>
+        </aside>
+
+        <div class="portal-main">
+          <div class="stat-grid">
+            <article class="stat-card">
+              <strong data-doctor-stat="total">0</strong>
+              <span>Lịch hẹn phụ trách</span>
+            </article>
+            <article class="stat-card">
+              <strong data-doctor-stat="prescribed">0</strong>
+              <span>Đã kê đơn thuốc</span>
+            </article>
+            <article class="stat-card">
+              <strong data-doctor-location>—</strong>
+              <span>Cơ sở công tác</span>
+            </article>
+          </div>
+
+          <section class="panel" id="doctor-schedule-section">
+            <div class="panel-head">
+              <div>
+                <h2>Danh sách bệnh nhân đăng ký khám</h2>
+                <p class="muted">Chỉ hiển thị lịch hẹn tại cơ sở của bạn (không bao gồm lịch đã hủy và lịch của cơ sở khác).</p>
+              </div>
+              <span class="status-pill">Cô lập theo cơ sở</span>
+            </div>
+            <div class="table-wrap">
+              <table id="doctor-appointment-table">
+                <thead>
+                  <tr>
+                    <th>Mã / Người bệnh</th>
+                    <th>Liên hệ</th>
+                    <th>Ngày / Giờ</th>
+                    <th>Hạng dịch vụ / Ghi chú</th>
+                    <th>Tiền thuốc</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal" id="prescription-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="rx-modal-title">
+    <div class="modal-backdrop" data-close-rx></div>
+    <div class="modal-card" style="max-width:740px;max-height:90vh;overflow:auto;">
+      <button class="modal-close" type="button" aria-label="Đóng" data-close-rx>×</button>
+      <span class="mini-label">Đơn thuốc điện tử</span>
+      <h2 id="rx-modal-title" style="margin:6px 0 14px;">Kê đơn thuốc</h2>
+      <form id="prescription-form">
+        <input type="hidden" name="appointmentId">
+        <label>Chọn mẫu đơn theo bệnh lý (tự điền thuốc &amp; giá tham khảo)
+          <select id="rx-template-select">
+            <option value="">— Tự nhập thủ công hoặc chọn mẫu bệnh lý —</option>
+          </select>
+        </label>
+        <label>Chẩn đoán của bác sĩ
+          <input name="diagnosis" type="text" placeholder="Ví dụ: Viêm mũi xoang cấp" required>
+        </label>
+        <div style="margin:12px 0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="font-size:12px;">Danh sách thuốc &amp; chi phí</strong>
+            <button type="button" class="ghost-button" id="rx-add-row">+ Thêm thuốc</button>
+          </div>
+          <div id="rx-items-container" style="display:grid;gap:8px;"></div>
+        </div>
+        <div class="service-total" style="margin:12px 0;">
+          <span>Tổng tiền thuốc</span>
+          <strong id="rx-total-preview">0 đ</strong>
+        </div>
+        <label>Lời dặn của bác sĩ
+          <textarea name="advice" rows="2" placeholder="Hướng dẫn ăn uống, sinh hoạt, lịch tái khám..."></textarea>
+        </label>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;">
+          <button type="button" class="ghost-button" data-close-rx>Hủy</button>
+          <button type="submit" class="button button-primary">Lưu đơn thuốc</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <span>© 2026 Lộc Khang Clinic. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/login">Cổng bệnh nhân</a>
+        <a href="/admin-login">Quản trị</a>
+        <a href="/">Trang chủ</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/pages.js?v=3" defer></script>
+</body>
+</html>

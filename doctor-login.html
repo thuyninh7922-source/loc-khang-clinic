@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng nhập Bác sĩ — Lộc Khang Clinic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/pages.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">✚</span>
+        <span class="brand-text">
+          <strong>Lộc Khang</strong>
+          <small>CLINIC</small>
+        </span>
+      </a>
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <a href="/">Trang chủ</a>
+        <a href="/doctors">Đội ngũ</a>
+        <a href="/diseases">Tra cứu bệnh lý</a>
+        <a href="/locations">Cơ sở</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="ghost-button" href="/login">Cổng bệnh nhân</a>
+        <a class="ghost-button" href="/admin-login">Quản trị</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="auth-page">
+    <div class="container auth-grid">
+      <section class="auth-card">
+        <span class="mini-label">Cổng bác sĩ</span>
+        <h1>Đăng nhập bác sĩ.</h1>
+        <p class="muted">Khu vực dành riêng cho bác sĩ phụ trách. Bạn chỉ xem được lịch khám và kê đơn thuốc cho bệnh nhân thuộc đúng cơ sở công tác của mình.</p>
+
+        <form id="doctor-login-form" class="auth-form">
+          <label>Email bác sĩ
+            <input name="email" type="email" autocomplete="email" placeholder="bs.nguyenvana@lockhang.clinic" required>
+          </label>
+          <label>Mật khẩu
+            <input name="password" type="password" autocomplete="current-password" placeholder="••••••••••" required>
+          </label>
+          <p id="doctor-login-error" class="form-error" role="alert"></p>
+          <button type="submit" class="button button-primary" style="width:100%;justify-content:center;">
+            Vào trang bác sĩ <span aria-hidden="true">→</span>
+          </button>
+        </form>
+
+        <p class="muted" style="margin-top:16px;font-size:13px;text-align:center;">
+          Tài khoản bác sĩ được cấp bởi Quản trị viên tại trang <a href="/admin-login">Quản trị</a>.
+        </p>
+      </section>
+
+      <aside class="auth-side">
+        <span class="mini-label">DOCTOR WORKSPACE</span>
+        <h2>Thăm khám tập trung,<br>kê đơn chính xác.</h2>
+        <p>Hệ thống tự động lọc đúng danh sách bệnh nhân đã đặt lịch với bạn tại chi nhánh đang công tác.</p>
+        <ul class="auth-checklist">
+          <li>Cô lập dữ liệu theo từng cơ sở và từng bác sĩ</li>
+          <li>Kê đơn thuốc điện tử nhanh từ 13 mẫu bệnh lý</li>
+          <li>Tự động tính tổng tiền thuốc và đồng bộ ra hóa đơn</li>
+        </ul>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <span>© 2026 Lộc Khang Clinic. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/login">Cổng bệnh nhân</a>
+        <a href="/admin-login">Quản trị</a>
+        <a href="/">Trang chủ</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/pages.js?v=3" defer></script>
+</body>
+</html>
