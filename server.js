@@ -4,6 +4,7 @@ const express = require('express');
 const session = require('express-session');
 const connectPgSimple = require('connect-pg-simple');
 const helmet = require('helmet');
+const bcrypt = require('bcryptjs');
 const { rateLimit } = require('express-rate-limit');
 const { pool, runMigrations, bootstrapAdmin } = require('./db');
 const locations = require('./data/locations.json');
@@ -184,7 +185,6 @@ app.post('/api/auth/register', authLimiter, verifySameOrigin, asyncRoute(async (
   if (password.length < 10 || password.length > 128) {
     return fail(res, 400, 'Mật khẩu cần có từ 10 đến 128 ký tự.');
   }
-  const bcrypt = require('bcryptjs');
   const passwordHash = await bcrypt.hash(password, 12);
   const id = crypto.randomUUID();
   try {
@@ -204,14 +204,15 @@ app.post('/api/auth/register', authLimiter, verifySameOrigin, asyncRoute(async (
 async function login(req, res, role) {
   const email = normalizeEmail(req.body.email);
   const password = typeof req.body.password === 'string' ? req.body.password : '';
-  if (!isValidEmail(email) || !password || password.length > 128) return fail(res, 401, 'Email hoặc mật khẩu chưa đúng.');
+  if (!isValidEmail(email) || !password || password.length > 128) {
+    return fail(res, 401, 'Email hoặc mật khẩu chưa đúng.');
+  }
   const result = await pool.query(
     `SELECT id, email, full_name, phone, password_hash, role, location_id, doctor_name
      FROM clinic_accounts WHERE email = $1 LIMIT 1`,
     [email],
   );
   const account = result.rows[0];
-  const bcrypt = require('bcryptjs');
   const passwordMatches = account ? await bcrypt.compare(password, account.password_hash) : false;
   if (!account || account.role !== role || !passwordMatches) {
     const messages = {
@@ -225,6 +226,7 @@ async function login(req, res, role) {
   const token = await regenerateSession(req, user);
   res.json({ user, csrfToken: token });
 }
+
 app.post('/api/auth/login', authLimiter, verifySameOrigin, asyncRoute((req, res) => login(req, res, 'patient')));
 app.post('/api/auth/doctor/login', authLimiter, verifySameOrigin, asyncRoute((req, res) => login(req, res, 'doctor')));
 app.post('/api/auth/admin/login', authLimiter, verifySameOrigin, asyncRoute((req, res) => login(req, res, 'admin')));
@@ -234,7 +236,25 @@ app.post('/api/auth/logout', verifySameOrigin, asyncRoute(async (req, res) => {
   res.json({ ok: true });
 }));
 
-// Admin cấp tài khoản bác sĩ gắn cố định với 1 cơ sở và 1 bác sĩ trong danh mục
+// === 3 API QUẢN LÝ TÀI KHOẢN BÁC SĨ (CHỈ ADMIN) ===
+
+// 1. Lấy danh sách tài khoản bác sĩ đã cấp
+app.get('/api/admin/doctors/accounts', requireAdmin, asyncRoute(async (_req, res) => {
+  const result = await pool.query(
+    `SELECT id, full_name, email, phone, location_id, doctor_name, created_at
+     FROM clinic_accounts
+     WHERE role = 'doctor'
+     ORDER BY created_at DESC LIMIT 200`,
+  );
+  const locById = new Map(locations.map((loc) => [loc.id, loc.name]));
+  const accounts = result.rows.map((row) => ({
+    ...row,
+    location_name: locById.get(row.location_id) || row.location_id || '—',
+  }));
+  res.json({ accounts });
+}));
+
+// 2. Cấp tài khoản bác sĩ mới (gắn cố định 1 cơ sở + 1 bác sĩ)
 app.post('/api/admin/doctors/accounts', requireAdmin, verifySameOrigin, asyncRoute(async (req, res) => {
   const fullName = inputString(req.body.fullName, 120);
   const phone = normalizePhone(req.body.phone);
@@ -256,7 +276,6 @@ app.post('/api/admin/doctors/accounts', requireAdmin, verifySameOrigin, asyncRou
     return fail(res, 400, 'Tên bác sĩ không có trong danh mục bác sĩ.');
   }
 
-  const bcrypt = require('bcryptjs');
   const passwordHash = await bcrypt.hash(password, 12);
   const id = crypto.randomUUID();
   try {
@@ -274,6 +293,19 @@ app.post('/api/admin/doctors/accounts', requireAdmin, verifySameOrigin, asyncRou
   });
 }));
 
+// 3. Thu hồi (xóa) tài khoản bác sĩ
+app.delete('/api/admin/doctors/accounts/:id', requireAdmin, verifySameOrigin, asyncRoute(async (req, res) => {
+  if (!isUuid(req.params.id)) return fail(res, 400, 'Mã tài khoản không hợp lệ.');
+  const result = await pool.query(
+    `DELETE FROM clinic_accounts WHERE id = $1 AND role = 'doctor' RETURNING id, email`,
+    [req.params.id],
+  );
+  if (!result.rowCount) return fail(res, 404, 'Không tìm thấy tài khoản bác sĩ.');
+  res.json({ deleted: result.rows[0] });
+}));
+
+// === DANH MỤC CÔNG KHAI ===
+
 app.get('/api/locations', (_req, res) => {
   res.set('Cache-Control', 'public, max-age=300');
   res.json({ locations });
@@ -288,6 +320,8 @@ app.get('/api/doctors', (_req, res) => {
   res.set('Cache-Control', 'public, max-age=300');
   res.json(doctorCatalog);
 });
+
+// === ĐẶT LỊCH & QUẢN LÝ LỊCH HẸN ===
 
 app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   const doctorName = inputString(req.body.doctor, 120);
@@ -312,6 +346,7 @@ app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   if (validationError) return fail(res, 400, validationError);
   const location = locations.find((item) => item.id === data.locationId);
   if (!location) return fail(res, 400, 'Vui lòng chọn một cơ sở trong danh sách.');
+
   let serviceIds = Array.isArray(req.body.serviceIds)
     ? req.body.serviceIds.filter((value) => typeof value === 'string').map((value) => value.slice(0, 64))
     : [];
@@ -334,6 +369,7 @@ app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   const isFirstVisit = previous.rowCount === 0;
   const quote = billing.computeQuote(serviceIds, isFirstVisit, serviceTier);
   if (quote.error) return fail(res, 400, quote.error);
+
   const invoiceToken = billing.newInvoiceToken();
   const patient = currentUser(req)?.role === 'patient' ? currentUser(req) : null;
   const id = crypto.randomUUID();
@@ -361,7 +397,6 @@ app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   });
 }));
 
-// Cô lập dữ liệu theo vai trò: admin (toàn chuỗi), doctor (đúng cơ sở + đúng bác sĩ), patient (của bản thân)
 app.get('/api/appointments', requireUser, asyncRoute(async (req, res) => {
   const user = currentUser(req);
   if (user.role === 'admin') {
@@ -461,11 +496,12 @@ app.patch('/api/admin/appointments/:id', requireAdmin, verifySameOrigin, asyncRo
   res.json({ appointment: result.rows[0] });
 }));
 
+// === KÊ ĐƠN THUỐC ĐIỆN TỬ ===
+
 app.get('/api/admin/prescription-templates', requireStaff, (_req, res) => {
   res.json(prescriptionCatalog);
 });
 
-// Kê đơn thuốc: bác sĩ chỉ được kê cho đúng lịch của mình tại đúng cơ sở của mình
 app.patch('/api/admin/appointments/:id/prescription', requireStaff, verifySameOrigin, asyncRoute(async (req, res) => {
   if (!isUuid(req.params.id)) return fail(res, 400, 'Mã lịch hẹn không hợp lệ.');
   const diagnosis = inputString(req.body.diagnosis, 300);
@@ -531,6 +567,8 @@ app.patch('/api/admin/appointments/:id/prescription', requireStaff, verifySameOr
   }
   res.json({ appointment: result.rows[0] });
 }));
+
+// === YÊU CẦU TƯ VẤN ===
 
 app.post('/api/contact-requests', verifySameOrigin, asyncRoute(async (req, res) => {
   const data = {
