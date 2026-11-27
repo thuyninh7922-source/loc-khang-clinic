@@ -30,6 +30,7 @@ const api = (() => {
     get: (url) => request(url),
     post: (url, body) => request(url, { method: 'POST', body: JSON.stringify(body) }),
     patch: (url, body) => request(url, { method: 'PATCH', body: JSON.stringify(body) }),
+    del: (url) => request(url, { method: 'DELETE' }),
   };
 })();
 
@@ -377,6 +378,10 @@ document.querySelector('#login-form')?.addEventListener('submit', (event) => {
   event.preventDefault();
   handleLogin(event.currentTarget, '/api/auth/login', 'login-error', '/patient');
 });
+document.querySelector('#doctor-login-form')?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  handleLogin(event.currentTarget, '/api/auth/doctor/login', 'doctor-login-error', '/doctor');
+});
 document.querySelector('#admin-login-form')?.addEventListener('submit', (event) => {
   event.preventDefault();
   handleLogin(event.currentTarget, '/api/auth/admin/login', 'admin-login-error', '/admin');
@@ -431,6 +436,55 @@ async function loadPatientPage() {
   }
 }
 
+async function loadDoctorPage() {
+  const body = document.querySelector('#doctor-appointment-table tbody');
+  try {
+    const [{ user }, { appointments }] = await Promise.all([api.get('/api/auth/me'), api.get('/api/appointments')]);
+    if (!user || user.role !== 'doctor') return window.location.replace('/doctor-login');
+    document.querySelectorAll('[data-user-name]').forEach((node) => { node.textContent = user.doctorName || user.fullName; });
+    document.querySelectorAll('[data-doctor-location]').forEach((node) => { node.textContent = user.locationId || '—'; });
+    const totalEl = document.querySelector('[data-doctor-stat="total"]');
+    const rxEl = document.querySelector('[data-doctor-stat="prescribed"]');
+    if (totalEl) totalEl.textContent = String(appointments.length);
+    if (rxEl) rxEl.textContent = String(appointments.filter((a) => a.prescription).length);
+
+    if (!appointments.length) {
+      return renderEmpty(body, 7, 'Hiện chưa có lịch hẹn nào tại cơ sở của bạn.');
+    }
+    const fragment = document.createDocumentFragment();
+    appointments.forEach((item) => {
+      const row = document.createElement('tr');
+      appendStackCell(row, item.public_code, item.full_name);
+      appendCell(row, item.phone);
+      appendStackCell(row, formatDate(item.appointment_date), item.appointment_time);
+      appendStackCell(row, serviceTierLabel(item.service_tier), item.note || 'Không có ghi chú');
+      appendCell(row, item.prescription ? formatMoney(item.prescription_total_vnd) : 'Chưa kê đơn');
+      addStatusCell(row, item.status);
+      const action = document.createElement('td');
+      const actions = document.createElement('div');
+      actions.className = 'cell-actions';
+      actions.appendChild(makeActionButton(
+        item.prescription ? 'Sửa đơn thuốc' : 'Kê đơn thuốc',
+        'ghost-button',
+        { id: item.id },
+        () => openPrescriptionModal(item),
+      ));
+      const link = document.createElement('a');
+      link.className = 'ghost-button';
+      link.href = `/invoice?code=${encodeURIComponent(item.public_code)}`;
+      link.textContent = 'Xem đơn';
+      actions.appendChild(link);
+      action.appendChild(actions);
+      row.appendChild(action);
+      fragment.appendChild(row);
+    });
+    body.replaceChildren(fragment);
+  } catch (error) {
+    if (/đăng nhập|quyền truy cập|bác sĩ/i.test(error.message)) return window.location.replace('/doctor-login');
+    showToast('Không tải được lịch khám của bác sĩ', error.message);
+  }
+}
+
 async function loadAdminPage() {
   const body = document.querySelector('#appointment-table tbody');
   try {
@@ -447,6 +501,7 @@ async function loadAdminPage() {
     if (pending) pending.textContent = String(data.stats.pending);
     renderAdminAppointments(body, data.appointments);
     renderContactRequests(contactData.requests);
+    loadDoctorAccounts();
   } catch (error) {
     if (/đăng nhập|quyền truy cập/i.test(error.message)) return window.location.replace('/admin-login');
     showToast('Không tải được dữ liệu quản trị', error.message);
@@ -530,6 +585,89 @@ function renderContactRequests(requests) {
   body.replaceChildren(fragment);
 }
 
+// === QUẢN LÝ TÀI KHOẢN BÁC SĨ (ADMIN) ===
+let adminDoctorOptionsLoaded = false;
+
+async function loadDoctorAccounts() {
+  const tableBody = document.querySelector('#doctor-account-table tbody');
+  const docSelect = document.querySelector('#admin-doc-select');
+  const locSelect = document.querySelector('#admin-loc-select');
+  if (!tableBody) return;
+
+  try {
+    if (!adminDoctorOptionsLoaded && docSelect && locSelect) {
+      const [docCatalog, locData] = await Promise.all([
+        api.get('/api/doctors'),
+        api.get('/api/locations'),
+      ]);
+      docSelect.replaceChildren(new Option('— Chọn bác sĩ —', ''));
+      (docCatalog.doctors || []).forEach((doc) => {
+        const tierText = doc.tier === 'premium' ? 'Cao cấp' : 'Thường';
+        docSelect.add(new Option(`${doc.name} (${doc.specialty} · ${tierText})`, doc.name));
+      });
+      locSelect.replaceChildren(new Option('— Chọn cơ sở —', ''));
+      (locData.locations || []).forEach((loc) => {
+        locSelect.add(new Option(`${loc.name} (${loc.city})`, loc.id));
+      });
+      adminDoctorOptionsLoaded = true;
+    }
+
+    const { accounts } = await api.get('/api/admin/doctors/accounts');
+    if (!accounts.length) {
+      return renderEmpty(tableBody, 5, 'Chưa có tài khoản bác sĩ nào được cấp.');
+    }
+    const fragment = document.createDocumentFragment();
+    accounts.forEach((acc) => {
+      const row = document.createElement('tr');
+      appendStackCell(row, acc.doctor_name || acc.full_name, acc.full_name);
+      appendStackCell(row, acc.email, acc.phone);
+      appendCell(row, acc.location_name);
+      appendCell(row, formatDate(acc.created_at));
+      const action = document.createElement('td');
+      action.appendChild(makeActionButton('Thu hồi', 'ghost-button', { id: acc.id }, async () => {
+        if (!window.confirm(`Thu hồi tài khoản bác sĩ ${acc.email}?`)) return;
+        try {
+          await api.del(`/api/admin/doctors/accounts/${encodeURIComponent(acc.id)}`);
+          showToast('Đã thu hồi tài khoản bác sĩ', acc.email);
+          loadDoctorAccounts();
+        } catch (error) {
+          showToast('Chưa thu hồi được tài khoản', error.message);
+        }
+      }));
+      row.appendChild(action);
+      fragment.appendChild(row);
+    });
+    tableBody.replaceChildren(fragment);
+  } catch (error) {
+    showToast('Không tải được danh sách tài khoản bác sĩ', error.message);
+  }
+}
+
+document.querySelector('#admin-doc-select')?.addEventListener('change', (event) => {
+  const nameInput = document.querySelector('#admin-doc-fullname');
+  if (nameInput && event.target.value) nameInput.value = event.target.value;
+});
+
+document.querySelector('#create-doctor-account-form')?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  clearError('doctor-account-error');
+  const submit = form.querySelector('[type="submit"]');
+  submit.disabled = true;
+  try {
+    const payload = formData(form);
+    const { account } = await api.post('/api/admin/doctors/accounts', payload);
+    showToast('Đã cấp tài khoản bác sĩ', `${account.doctorName} (${account.email})`);
+    form.reset();
+    loadDoctorAccounts();
+  } catch (error) {
+    showError('doctor-account-error', error.message);
+  } finally {
+    submit.disabled = false;
+  }
+});
+
+// === MODAL KÊ ĐƠN THUỐC ĐIỆN TỬ (DÙNG CHUNG CHO ADMIN & BÁC SĨ) ===
 let rxTemplates = [];
 const rxModal = document.querySelector('#prescription-modal');
 const rxForm = document.querySelector('#prescription-form');
@@ -642,7 +780,8 @@ rxForm?.addEventListener('submit', async (event) => {
     });
     closeRxModal();
     showToast('Đã lưu đơn thuốc', 'Bệnh nhân có thể xem và in ngay trên hóa đơn.');
-    loadAdminPage();
+    if (document.querySelector('#doctor-appointment-table')) loadDoctorPage();
+    else if (document.querySelector('#appointment-table')) loadAdminPage();
   } catch (error) {
     showToast('Chưa lưu được đơn thuốc', error.message);
   } finally {
@@ -650,12 +789,18 @@ rxForm?.addEventListener('submit', async (event) => {
   }
 });
 
+// === KHỞI TẠO CỔNG TƯƠNG ỨNG ===
 if (document.querySelector('#patient-appointment-table')) loadPatientPage();
+if (document.querySelector('#doctor-appointment-table')) loadDoctorPage();
 if (document.querySelector('#appointment-table')) loadAdminPage();
 
 document.querySelector('#patient-logout')?.addEventListener('click', async () => {
   try { await api.post('/api/auth/logout', {}); } catch (error) { showToast('Không đăng xuất được', error.message); return; }
   window.location.assign('/login');
+});
+document.querySelector('#doctor-logout')?.addEventListener('click', async () => {
+  try { await api.post('/api/auth/logout', {}); } catch (error) { showToast('Không đăng xuất được', error.message); return; }
+  window.location.assign('/doctor-login');
 });
 document.querySelector('#admin-logout')?.addEventListener('click', async () => {
   try { await api.post('/api/auth/logout', {}); } catch (error) { showToast('Không đăng xuất được', error.message); return; }
@@ -680,7 +825,7 @@ document.querySelectorAll('.disease-card[data-category]').forEach((card) => {
   link.href = `/booking?${query.toString()}`;
 });
 
-const hasPortalLoader = Boolean(document.querySelector('#patient-appointment-table, #appointment-table'));
+const hasPortalLoader = Boolean(document.querySelector('#patient-appointment-table, #doctor-appointment-table, #appointment-table'));
 if (!hasPortalLoader && document.querySelector('[data-user-name]')) {
   api.get('/api/auth/me').then(({ user }) => {
     if (user) document.querySelectorAll('[data-user-name]').forEach((node) => { node.textContent = user.fullName; });
