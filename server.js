@@ -85,6 +85,8 @@ const pages = {
   '/doctors': 'doctors.html',
   '/admin': 'admin.html',
   '/admin-login': 'admin-login.html',
+  '/doctor': 'doctor.html',
+  '/doctor-login': 'doctor-login.html',
   '/login': 'login.html',
   '/register': 'register.html',
   '/patient': 'patient.html',
@@ -100,10 +102,22 @@ const isUuid = (value) => typeof value === 'string' && uuidPattern.test(value);
 const asyncRoute = (handler) => (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next);
 const fail = (res, status, error) => res.status(status).json({ error });
 const currentUser = (req) => req.session?.user || null;
-const requireUser = (req, res, next) => (currentUser(req) ? next() : fail(res, 401, 'Vui lòng đăng nhập để tiếp tục.'));
+
+const requireUser = (req, res, next) => (currentUser(req)
+  ? next()
+  : fail(res, 401, 'Vui lòng đăng nhập để tiếp tục.'));
+
 const requireAdmin = (req, res, next) => (currentUser(req)?.role === 'admin'
   ? next()
   : fail(res, currentUser(req) ? 403 : 401, 'Bạn không có quyền truy cập khu vực quản trị.'));
+
+const requireDoctor = (req, res, next) => (currentUser(req)?.role === 'doctor'
+  ? next()
+  : fail(res, currentUser(req) ? 403 : 401, 'Khu vực này chỉ dành cho bác sĩ.'));
+
+const requireStaff = (req, res, next) => (['admin', 'doctor'].includes(currentUser(req)?.role)
+  ? next()
+  : fail(res, currentUser(req) ? 403 : 401, 'Chỉ bác sĩ hoặc quản trị viên mới có quyền thực hiện.'));
 
 function csrfToken(req) {
   if (!req.session.csrfToken) req.session.csrfToken = crypto.randomBytes(32).toString('hex');
@@ -138,7 +152,15 @@ function regenerateSession(req, user) {
   });
 }
 function safeUser(row) {
-  return { id: row.id, fullName: row.full_name, email: row.email, phone: row.phone, role: row.role };
+  return {
+    id: row.id,
+    fullName: row.full_name,
+    email: row.email,
+    phone: row.phone,
+    role: row.role,
+    locationId: row.location_id || null,
+    doctorName: row.doctor_name || null,
+  };
 }
 function inputString(value, maxLength) {
   return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
@@ -174,7 +196,7 @@ app.post('/api/auth/register', authLimiter, verifySameOrigin, asyncRoute(async (
     if (error.code === '23505') return fail(res, 409, 'Email này đã được đăng ký. Hãy dùng email khác.');
     throw error;
   }
-  const user = { id, fullName, email, phone, role: 'patient' };
+  const user = { id, fullName, email, phone, role: 'patient', locationId: null, doctorName: null };
   const token = await regenerateSession(req, user);
   res.status(201).json({ user, csrfToken: token });
 }));
@@ -184,25 +206,72 @@ async function login(req, res, role) {
   const password = typeof req.body.password === 'string' ? req.body.password : '';
   if (!isValidEmail(email) || !password || password.length > 128) return fail(res, 401, 'Email hoặc mật khẩu chưa đúng.');
   const result = await pool.query(
-    'SELECT id, email, full_name, phone, password_hash, role FROM clinic_accounts WHERE email = $1 LIMIT 1',
+    `SELECT id, email, full_name, phone, password_hash, role, location_id, doctor_name
+     FROM clinic_accounts WHERE email = $1 LIMIT 1`,
     [email],
   );
   const account = result.rows[0];
   const bcrypt = require('bcryptjs');
   const passwordMatches = account ? await bcrypt.compare(password, account.password_hash) : false;
   if (!account || account.role !== role || !passwordMatches) {
-    return fail(res, 401, role === 'admin' ? 'Tài khoản quản trị hoặc mật khẩu chưa đúng.' : 'Email hoặc mật khẩu bệnh nhân chưa đúng.');
+    const messages = {
+      admin: 'Tài khoản quản trị hoặc mật khẩu chưa đúng.',
+      doctor: 'Tài khoản bác sĩ hoặc mật khẩu chưa đúng.',
+      patient: 'Email hoặc mật khẩu bệnh nhân chưa đúng.',
+    };
+    return fail(res, 401, messages[role] || 'Thông tin đăng nhập chưa đúng.');
   }
   const user = safeUser(account);
   const token = await regenerateSession(req, user);
   res.json({ user, csrfToken: token });
 }
 app.post('/api/auth/login', authLimiter, verifySameOrigin, asyncRoute((req, res) => login(req, res, 'patient')));
+app.post('/api/auth/doctor/login', authLimiter, verifySameOrigin, asyncRoute((req, res) => login(req, res, 'doctor')));
 app.post('/api/auth/admin/login', authLimiter, verifySameOrigin, asyncRoute((req, res) => login(req, res, 'admin')));
 app.post('/api/auth/logout', verifySameOrigin, asyncRoute(async (req, res) => {
   await new Promise((resolve, reject) => req.session.destroy((error) => (error ? reject(error) : resolve())));
   res.clearCookie('lk.sid', { httpOnly: true, secure: production, sameSite: 'lax', path: '/' });
   res.json({ ok: true });
+}));
+
+// Admin cấp tài khoản bác sĩ gắn cố định với 1 cơ sở và 1 bác sĩ trong danh mục
+app.post('/api/admin/doctors/accounts', requireAdmin, verifySameOrigin, asyncRoute(async (req, res) => {
+  const fullName = inputString(req.body.fullName, 120);
+  const phone = normalizePhone(req.body.phone);
+  const email = normalizeEmail(req.body.email);
+  const password = typeof req.body.password === 'string' ? req.body.password : '';
+  const locationId = inputString(req.body.locationId, 64);
+  const doctorName = inputString(req.body.doctorName, 120);
+
+  if (!fullName || fullName.length < 2 || !isValidPhone(phone) || !isValidEmail(email)) {
+    return fail(res, 400, 'Vui lòng kiểm tra họ tên, email và số điện thoại.');
+  }
+  if (password.length < 10 || password.length > 128) {
+    return fail(res, 400, 'Mật khẩu bác sĩ cần có từ 10 đến 128 ký tự.');
+  }
+  if (!locations.some((item) => item.id === locationId)) {
+    return fail(res, 400, 'Cơ sở công tác không hợp lệ.');
+  }
+  if (!findDoctor(doctorName)) {
+    return fail(res, 400, 'Tên bác sĩ không có trong danh mục bác sĩ.');
+  }
+
+  const bcrypt = require('bcryptjs');
+  const passwordHash = await bcrypt.hash(password, 12);
+  const id = crypto.randomUUID();
+  try {
+    await pool.query(
+      `INSERT INTO clinic_accounts (id, email, full_name, phone, password_hash, role, location_id, doctor_name)
+       VALUES ($1, $2, $3, $4, $5, 'doctor', $6, $7)`,
+      [id, email, fullName, phone, passwordHash, locationId, doctorName],
+    );
+  } catch (error) {
+    if (error.code === '23505') return fail(res, 409, 'Email này đã được sử dụng.');
+    throw error;
+  }
+  res.status(201).json({
+    account: { id, fullName, email, phone, role: 'doctor', locationId, doctorName },
+  });
 }));
 
 app.get('/api/locations', (_req, res) => {
@@ -292,6 +361,7 @@ app.post('/api/appointments', verifySameOrigin, asyncRoute(async (req, res) => {
   });
 }));
 
+// Cô lập dữ liệu theo vai trò: admin (toàn chuỗi), doctor (đúng cơ sở + đúng bác sĩ), patient (của bản thân)
 app.get('/api/appointments', requireUser, asyncRoute(async (req, res) => {
   const user = currentUser(req);
   if (user.role === 'admin') {
@@ -309,6 +379,23 @@ app.get('/api/appointments', requireUser, asyncRoute(async (req, res) => {
     ]);
     return res.json({ appointments: appointments.rows, stats: totals.rows[0] });
   }
+
+  if (user.role === 'doctor') {
+    if (!user.locationId || !user.doctorName) {
+      return fail(res, 403, 'Tài khoản bác sĩ chưa được gắn cơ sở công tác.');
+    }
+    const result = await pool.query(
+      `SELECT id, public_code, full_name, phone, specialty, doctor, service_tier, appointment_date, appointment_time, note,
+              location_id, location_name, location_city, location_address, status, created_at,
+              total_vnd, payment_status, prescription, prescription_total_vnd
+       FROM clinic_appointments
+       WHERE location_id = $1 AND doctor = $2 AND status <> 'cancelled'
+       ORDER BY appointment_date ASC, appointment_time ASC LIMIT 100`,
+      [user.locationId, user.doctorName],
+    );
+    return res.json({ appointments: result.rows });
+  }
+
   const result = await pool.query(
     `SELECT id, public_code, full_name, specialty, doctor, service_tier, appointment_date, appointment_time,
             location_id, location_name, location_city, location_address, status, created_at,
@@ -323,7 +410,7 @@ app.get('/api/invoices/:code', asyncRoute(async (req, res) => {
   const code = inputString(req.params.code, 64);
   const result = await pool.query(
     `SELECT public_code, patient_id, full_name, phone, specialty, doctor, service_tier, appointment_date, appointment_time,
-            location_name, location_city, location_address, status, created_at,
+            location_id, location_name, location_city, location_address, status, created_at,
             billing, subtotal_vnd, discount_vnd, total_vnd, is_first_visit, payment_method, payment_status, paid_at,
             prescription, prescription_total_vnd, invoice_token
      FROM clinic_appointments WHERE public_code = $1 LIMIT 1`,
@@ -333,6 +420,7 @@ app.get('/api/invoices/:code', asyncRoute(async (req, res) => {
   const user = currentUser(req);
   const allowed = row && (
     user?.role === 'admin'
+    || (user?.role === 'doctor' && row.location_id === user.locationId && row.doctor === user.doctorName)
     || (user?.role === 'patient' && row.patient_id && String(row.patient_id) === String(user.id))
     || billing.tokensMatch(row.invoice_token, inputString(req.query.t, 128))
   );
@@ -373,11 +461,12 @@ app.patch('/api/admin/appointments/:id', requireAdmin, verifySameOrigin, asyncRo
   res.json({ appointment: result.rows[0] });
 }));
 
-app.get('/api/admin/prescription-templates', requireAdmin, (_req, res) => {
+app.get('/api/admin/prescription-templates', requireStaff, (_req, res) => {
   res.json(prescriptionCatalog);
 });
 
-app.patch('/api/admin/appointments/:id/prescription', requireAdmin, verifySameOrigin, asyncRoute(async (req, res) => {
+// Kê đơn thuốc: bác sĩ chỉ được kê cho đúng lịch của mình tại đúng cơ sở của mình
+app.patch('/api/admin/appointments/:id/prescription', requireStaff, verifySameOrigin, asyncRoute(async (req, res) => {
   if (!isUuid(req.params.id)) return fail(res, 400, 'Mã lịch hẹn không hợp lệ.');
   const diagnosis = inputString(req.body.diagnosis, 300);
   const advice = inputString(req.body.advice, 1000);
@@ -404,24 +493,42 @@ app.patch('/api/admin/appointments/:id/prescription', requireAdmin, verifySameOr
     items.push({ name, dosage, quantity, unit, unitPrice, lineTotal: quantity * unitPrice });
   }
 
+  const user = currentUser(req);
   const prescriptionTotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
   const prescription = {
     diagnosis,
     advice,
-    prescribedBy: currentUser(req)?.fullName || 'Bác sĩ Lộc Khang',
+    prescribedBy: user.doctorName || user.fullName || 'Bác sĩ Lộc Khang',
     prescribedAt: new Date().toISOString(),
     items,
     total: prescriptionTotal,
   };
 
-  const result = await pool.query(
-    `UPDATE clinic_appointments
-     SET prescription = $1::jsonb, prescription_total_vnd = $2, updated_at = NOW()
-     WHERE id = $3
-     RETURNING id, public_code, prescription, prescription_total_vnd`,
-    [JSON.stringify(prescription), prescriptionTotal, req.params.id],
-  );
-  if (!result.rowCount) return fail(res, 404, 'Không tìm thấy lịch hẹn.');
+  let result;
+  if (user.role === 'doctor') {
+    if (!user.locationId || !user.doctorName) {
+      return fail(res, 403, 'Tài khoản bác sĩ chưa được gắn cơ sở công tác.');
+    }
+    result = await pool.query(
+      `UPDATE clinic_appointments
+       SET prescription = $1::jsonb, prescription_total_vnd = $2, updated_at = NOW()
+       WHERE id = $3 AND location_id = $4 AND doctor = $5 AND status <> 'cancelled'
+       RETURNING id, public_code, prescription, prescription_total_vnd`,
+      [JSON.stringify(prescription), prescriptionTotal, req.params.id, user.locationId, user.doctorName],
+    );
+  } else {
+    result = await pool.query(
+      `UPDATE clinic_appointments
+       SET prescription = $1::jsonb, prescription_total_vnd = $2, updated_at = NOW()
+       WHERE id = $3
+       RETURNING id, public_code, prescription, prescription_total_vnd`,
+      [JSON.stringify(prescription), prescriptionTotal, req.params.id],
+    );
+  }
+
+  if (!result.rowCount) {
+    return fail(res, 404, 'Không tìm thấy lịch hẹn hoặc bạn không có quyền kê đơn cho lịch hẹn này.');
+  }
   res.json({ appointment: result.rows[0] });
 }));
 
