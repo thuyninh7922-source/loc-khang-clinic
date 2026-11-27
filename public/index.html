@@ -1,30 +1,34 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Lộc Khang Clinic — phòng khám đa khoa chuyên sâu, đồng hành cùng sức khỏe của bạn bằng sự tận tâm và chuyên môn vững vàng." />
-  <meta name="theme-color" content="#0b5b5a" />
-  <title>Lộc Khang Clinic — Chăm sóc sức khỏe chủ động</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230b5b5a'/%3E%3Cpath d='M44 22h12v22h22v12H56v22H44V56H22V44h22z' fill='white'/%3E%3C/svg%3E" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/pages.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lộc Khang Clinic — Phòng khám đa khoa hiện đại</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/pages.css">
 </head>
 <body>
-  <div class="announcement"><div class="container announcement-inner"><span class="announcement-dot"></span><span>Khám ngoài giờ đến 20:00 mỗi ngày</span><a href="#contact">Xem giờ làm việc <span aria-hidden="true">↗</span></a><span class="announcement-contact">Hotline <strong>1900 6868</strong></span></div></div>
+  <div class="top-bar">
+    <div class="container top-bar-wrap">
+      <span>● Khám ngoài giờ đến 20:00 mỗi ngày &nbsp;<a href="#contact">Xem giờ làm việc ↗</a></span>
+      <span>Hotline <strong>1900 6868</strong></span>
+    </div>
+  </div>
 
-  <header class="site-header" id="top">
+  <header class="site-header">
     <div class="container nav-wrap">
-      <a class="brand" href="#top" aria-label="Lộc Khang Clinic - Trang chủ">
-        <span class="brand-mark" aria-hidden="true"><span></span><i></i></span>
-        <span><strong>Lộc Khang</strong><small>CLINIC</small></span>
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">✚</span>
+        <span class="brand-text">
+          <strong>Lộc Khang</strong>
+          <small>CLINIC</small>
+        </span>
       </a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Mở menu"><span></span><span></span><span></span></button>
-      <nav class="main-nav" id="main-nav" aria-label="Điều hướng chính">
-        <a class="active" href="#top">Trang chủ</a>
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <a href="/" class="is-active">Trang chủ</a>
         <a href="#specialties">Chuyên khoa</a>
         <a href="/doctors">Đội ngũ</a>
         <a href="/locations">Cơ sở</a>
@@ -32,66 +36,369 @@
         <a href="/diseases">Tra cứu bệnh lý</a>
         <a href="#contact">Liên hệ</a>
       </nav>
-      <div class="nav-auth"><a href="/login">Đăng nhập</a><a href="/register">Đăng ký</a><a class="nav-admin-link" href="/admin-login">Quản trị</a></div>
-      <a class="nav-cta" href="/booking"><span>Đặt lịch khám</span><b>↗</b></a>
+      <div class="nav-actions">
+        <a href="/login">Đăng nhập</a>
+        <a href="/register">Đăng ký</a>
+        <!-- Cổng bác sĩ -->
+        <a href="/doctor-login">Bác sĩ</a>
+        <a href="/admin-login">Quản trị</a>
+        <a class="button button-primary" href="/booking">Đặt lịch khám <span aria-hidden="true">→</span></a>
+      </div>
     </div>
   </header>
 
   <main>
-    <section class="hero section-pad">
-      <div class="hero-pattern"></div>
+    <section class="hero">
       <div class="container hero-grid">
         <div class="hero-copy">
-          <div class="eyebrow"><span class="eyebrow-line"></span> Chăm sóc từ điều nhỏ nhất</div>
-          <h1>Khỏe hơn mỗi ngày,<br /><em>an tâm mỗi bước.</em></h1>
+          <span class="mini-label">CHĂM SÓC TỪ ĐIỀU NHỎ NHẤT</span>
+          <h1>Khỏe hơn mỗi ngày,<br>an tâm mỗi bước.</h1>
           <p class="hero-lead">Một địa chỉ chăm sóc sức khỏe hiện đại, nơi chuyên môn tận tâm gặp gỡ trải nghiệm thấu hiểu dành cho cả gia đình.</p>
-          <div class="hero-actions"><a class="button button-primary" href="#appointment">Đặt lịch khám <span>→</span></a><a class="text-link" href="#specialties">Khám phá chuyên khoa <span>↗</span></a></div>
-          <div class="hero-proof"><div class="avatar-stack"><span class="avatar avatar-a">AN</span><span class="avatar avatar-b">MK</span><span class="avatar avatar-c">LT</span><span class="avatar avatar-more">+</span></div><div><strong>4.9/5</strong><span>từ hơn 2.000 lượt đánh giá</span></div></div>
-        </div>
-        <div class="hero-visual" aria-label="Không gian chăm sóc sức khỏe tại Lộc Khang Clinic">
-          <div class="visual-orb"></div><div class="visual-grid"></div>
-          <div class="doctor-card">
-            <div class="doctor-portrait"><div class="portrait-hair"></div><div class="portrait-face"></div><div class="portrait-coat"></div><div class="portrait-stethoscope"></div></div>
-            <div class="doctor-info"><span class="status"><i></i> Đang tư vấn</span><strong>BS. Nguyễn Minh An</strong><span>Chuyên khoa Nội tổng quát</span></div>
-            <div class="doctor-arrow">↗</div>
+          <div class="hero-actions">
+            <a class="button button-primary" href="/booking">Đặt lịch khám <span aria-hidden="true">→</span></a>
+            <a class="text-link" href="#specialties">Khám phá chuyên khoa ↗</a>
           </div>
-          <div class="hero-note note-one"><span class="note-icon">✦</span><div><strong>24/7</strong><small>Đồng hành sức khỏe</small></div></div>
-          <div class="hero-note note-two"><span class="note-icon note-heart">♥</span><div><strong>14+</strong><small>Chuyên khoa chuyên sâu</small></div></div>
-          <div class="visual-caption"><span>Không gian chuẩn quốc tế</span><span class="caption-line"></span></div>
+          <div class="hero-trust">
+            <strong>4.9/5</strong>
+            <span>từ hơn 2.000 lượt đánh giá</span>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-pill top">
+            <strong>24/7</strong>
+            <span>Đồng hành sức khỏe</span>
+          </div>
+          <div class="hero-doctor-card">
+            <small>● Đang tư vấn</small>
+            <strong>BS. Nguyễn Minh An</strong>
+            <span>Chuyên khoa Nội tổng quát</span>
+          </div>
+          <div class="hero-pill bottom">
+            <strong>14+</strong>
+            <span>Chuyên khoa chuyên sâu</span>
+          </div>
         </div>
       </div>
-      <div class="container hero-bottom"><span class="scroll-label">Cuộn để khám phá</span><span class="scroll-line"></span><a class="hero-location" href="/locations">7 vị trí mẫu · chưa xác nhận</a></div>
     </section>
 
-    <section class="trust-bar"><div class="container trust-grid"><div class="trust-intro"><span class="mini-label">Vì bạn chọn Lộc Khang</span><strong>Chuyên tâm trong từng<br />lần thăm khám.</strong></div><div class="trust-item"><span class="trust-icon">◌</span><div><strong>Đội ngũ đầu ngành</strong><span>Bác sĩ giàu kinh nghiệm, tận tâm</span></div></div><div class="trust-item"><span class="trust-icon">⌁</span><div><strong>Quy trình tinh gọn</strong><span>Đặt lịch dễ dàng, giảm thời gian chờ</span></div></div><div class="trust-item"><span class="trust-icon">♡</span><div><strong>Chăm sóc cá nhân</strong><span>Lắng nghe để hiểu đúng nhu cầu</span></div></div></div></section>
-
-    <section class="section-pad specialties" id="specialties">
+    <section class="section" id="specialties">
       <div class="container">
-        <div class="section-heading"><div><span class="eyebrow"><span class="eyebrow-line"></span> Chăm sóc toàn diện</span><h2>Chuyên khoa <em>cho mọi nhu cầu.</em></h2></div><a class="text-link" href="#services">Xem tất cả dịch vụ <span>↗</span></a></div>
-        <div class="specialty-layout"><div class="specialty-feature"><div class="feature-top"><span class="feature-icon">◒</span><span class="feature-index">01 / 06</span></div><h3>Nội tổng quát</h3><p>Thăm khám tổng thể, tầm soát sớm và quản lý sức khỏe chủ động cho người lớn.</p><a class="circle-link" href="#appointment" aria-label="Đặt lịch Nội tổng quát">↗</a><div class="feature-orbit orbit-1"></div><div class="feature-orbit orbit-2"></div></div><div class="specialty-list"><button class="specialty-row active" type="button" data-specialty="Nội tổng quát"><span class="row-number">01</span><span><strong>Nội tổng quát</strong><small>Khám và tầm soát sức khỏe</small></span><b>↗</b></button><button class="specialty-row" type="button" data-specialty="Tim mạch"><span class="row-number">02</span><span><strong>Tim mạch</strong><small>Trái tim khỏe, cuộc sống vui</small></span><b>↗</b></button><button class="specialty-row" type="button" data-specialty="Nhi khoa"><span class="row-number">03</span><span><strong>Nhi khoa</strong><small>Chăm sóc bé từ những năm đầu</small></span><b>↗</b></button><button class="specialty-row" type="button" data-specialty="Sản phụ khoa"><span class="row-number">04</span><span><strong>Sản phụ khoa</strong><small>Đồng hành cùng thiên chức</small></span><b>↗</b></button><button class="specialty-row" type="button" data-specialty="Cơ xương khớp"><span class="row-number">05</span><span><strong>Cơ xương khớp</strong><small>Vận động nhẹ nhàng, sống tự do</small></span><b>↗</b></button><button class="specialty-row" type="button" data-specialty="Da liễu"><span class="row-number">06</span><span><strong>Da liễu</strong><small>Làn da khỏe từ bên trong</small></span><b>↗</b></button></div></div>
+        <div class="section-head">
+          <div>
+            <span class="mini-label">CHĂM SÓC TOÀN DIỆN</span>
+            <h2>Chuyên khoa cho mọi nhu cầu.</h2>
+          </div>
+          <a class="text-link" href="#services">Xem tất cả dịch vụ ↗</a>
+        </div>
+        <div class="specialty-showcase">
+          <article class="specialty-highlight" id="specialty-preview">
+            <span class="specialty-index" id="specialty-index">01 / 06</span>
+            <h3 id="specialty-title">Nội tổng quát</h3>
+            <p id="specialty-desc">Thăm khám tổng thể, tầm soát sớm và quản lý sức khỏe chủ động cho người lớn.</p>
+          </article>
+          <div class="specialty-list">
+            <button type="button" class="specialty-item is-active" data-specialty="Nội tổng quát" data-index="01 / 06" data-desc="Thăm khám tổng thể, tầm soát sớm và quản lý sức khỏe chủ động cho người lớn.">
+              <span>01</span>
+              <div><strong>Nội tổng quát</strong><small>Khám và tầm soát sức khỏe</small></div>
+              <span aria-hidden="true">↗</span>
+            </button>
+            <button type="button" class="specialty-item" data-specialty="Tim mạch" data-index="02 / 06" data-desc="Khám tim mạch, đo điện tâm đồ, tầm soát tăng huyết áp và rối loạn mỡ máu.">
+              <span>02</span>
+              <div><strong>Tim mạch</strong><small>Trái tim khỏe, cuộc sống vui</small></div>
+              <span aria-hidden="true">↗</span>
+            </button>
+            <button type="button" class="specialty-item" data-specialty="Nhi khoa" data-index="03 / 06" data-desc="Theo dõi phát triển, điều trị hô hấp và tư vấn dinh dưỡng cho trẻ nhỏ.">
+              <span>03</span>
+              <div><strong>Nhi khoa</strong><small>Chăm sóc bé từ những năm đầu</small></div>
+              <span aria-hidden="true">↗</span>
+            </button>
+            <button type="button" class="specialty-item" data-specialty="Sản phụ khoa" data-index="04 / 06" data-desc="Khám phụ khoa định kỳ, theo dõi thai kỳ và chăm sóc sức khỏe sinh sản.">
+              <span>04</span>
+              <div><strong>Sản phụ khoa</strong><small>Đồng hành cùng thiên chức</small></div>
+              <span aria-hidden="true">↗</span>
+            </button>
+            <button type="button" class="specialty-item" data-specialty="Cơ xương khớp" data-index="05 / 06" data-desc="Chẩn đoán đau lưng, thoái hóa khớp và hướng dẫn phục hồi vận động.">
+              <span>05</span>
+              <div><strong>Cơ xương khớp</strong><small>Vận động nhẹ nhàng, sống tự do</small></div>
+              <span aria-hidden="true">↗</span>
+            </button>
+            <button type="button" class="specialty-item" data-specialty="Da liễu" data-index="06 / 06" data-desc="Điều trị viêm da cơ địa, dị ứng, mụn và chăm sóc da liễu chuyên sâu.">
+              <span>06</span>
+              <div><strong>Da liễu</strong><small>Làn da khỏe từ bên trong</small></div>
+              <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="section-pad services" id="services"><div class="container"><div class="section-heading"><div><span class="eyebrow"><span class="eyebrow-line"></span> Dịch vụ y tế</span><h2>Điều bạn cần,<br /><em>chúng tôi sẵn sàng.</em></h2></div><div class="service-tools"><label class="service-search"><span>⌕</span><input id="service-search" type="search" placeholder="Tìm dịch vụ" aria-label="Tìm dịch vụ" /></label><select id="service-specialty-filter" class="service-specialty" aria-label="Lọc dịch vụ theo chuyên khoa"><option value="all">Mọi chuyên khoa</option><option>Nội tổng quát</option><option>Tim mạch</option><option>Da liễu</option></select><div class="service-filter" role="group" aria-label="Lọc theo loại dịch vụ"><button class="filter-button active" data-filter="all" type="button">Tất cả</button><button class="filter-button" data-filter="Khám bệnh" type="button">Khám bệnh</button><button class="filter-button" data-filter="Xét nghiệm" type="button">Xét nghiệm</button><button class="filter-button" data-filter="Tầm soát" type="button">Tầm soát</button></div></div></div><div class="service-grid"><article class="service-card" data-category="Khám bệnh" data-specialty="Nội tổng quát"><div class="card-top"><span class="service-number">01</span><span class="service-icon">✣</span></div><h3>Khám chuyên khoa</h3><p>Thăm khám cùng bác sĩ đúng chuyên môn, đúng nhu cầu.</p><button class="card-link service-detail" type="button" data-title="Khám chuyên khoa" data-content="Lựa chọn chuyên khoa, bác sĩ và khung giờ phù hợp. Đội ngũ điều phối của Lộc Khang sẽ gọi xác nhận trong vòng 15 phút giờ hành chính.">Tìm hiểu thêm <span>→</span></button></article><article class="service-card service-card-highlight" data-category="Tầm soát" data-specialty="Tim mạch"><div class="card-top"><span class="service-number">02</span><span class="service-icon">◌</span></div><span class="card-tag">Được lựa chọn nhiều nhất</span><h3>Gói tầm soát sức khỏe</h3><p>Kiểm tra chủ động với các gói được thiết kế theo độ tuổi.</p><button class="card-link service-detail" type="button" data-title="Gói tầm soát sức khỏe" data-content="Từ gói cơ bản đến nâng cao, bạn có thể chủ động kiểm tra các chỉ số quan trọng và nhận tư vấn 1:1 sau khi có kết quả.">Xem các gói <span>→</span></button></article><article class="service-card" data-category="Xét nghiệm" data-specialty="Da liễu"><div class="card-top"><span class="service-number">03</span><span class="service-icon">⌁</span></div><h3>Xét nghiệm tại nhà</h3><p>Lấy mẫu tận nơi, trả kết quả nhanh chóng và bảo mật.</p><button class="card-link service-detail" type="button" data-title="Xét nghiệm tại nhà" data-content="Đăng ký trước 17:00 để được hỗ trợ lấy mẫu trong ngày tại khu vực nội thành TP. Hồ Chí Minh. Kết quả gửi qua email hoặc nhận trực tiếp tại phòng khám.">Đăng ký dịch vụ <span>→</span></button></article></div></div></section>
+    <section class="section section-soft" id="services">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="mini-label">DỊCH VỤ Y TẾ</span>
+            <h2>Điều bạn cần,<br>chúng tôi sẵn sàng.</h2>
+          </div>
+          <div class="service-filters">
+            <input type="search" id="service-search" placeholder="Tìm dịch vụ">
+            <select id="service-specialty-filter" aria-label="Lọc theo chuyên khoa">
+              <option value="all">Mọi chuyên khoa</option>
+              <option value="Nội tổng quát">Nội tổng quát</option>
+              <option value="Tim mạch">Tim mạch</option>
+              <option value="Nhi khoa">Nhi khoa</option>
+              <option value="Da liễu">Da liễu</option>
+            </select>
+            <button type="button" class="filter-pill is-active" data-filter="all">Tất cả</button>
+            <button type="button" class="filter-pill" data-filter="exam">Khám bệnh</button>
+            <button type="button" class="filter-pill" data-filter="lab">Xét nghiệm</button>
+            <button type="button" class="filter-pill" data-filter="screening">Tầm soát</button>
+          </div>
+        </div>
+        <div class="service-cards">
+          <article class="service-card" data-category="exam">
+            <span class="card-num">01</span>
+            <h3>Khám chuyên khoa</h3>
+            <p>Thăm khám cùng bác sĩ đúng chuyên môn, đúng nhu cầu (có cả gói Bình dân và Cao cấp).</p>
+            <a href="/booking">Tìm hiểu thêm →</a>
+          </article>
+          <article class="service-card is-featured" data-category="screening">
+            <span class="card-badge">ĐƯỢC LỰA CHỌN NHIỀU NHẤT</span>
+            <h3>Gói tầm soát sức khỏe</h3>
+            <p>Kiểm tra chủ động với các gói được thiết kế theo độ tuổi và nhu cầu chuyên sâu.</p>
+            <a href="/booking">Xem các gói →</a>
+          </article>
+          <article class="service-card" data-category="lab">
+            <span class="card-num">03</span>
+            <h3>Xét nghiệm tại nhà</h3>
+            <p>Lấy mẫu tận nơi, trả kết quả nhanh chóng và bảo mật trên hồ sơ bệnh nhân.</p>
+            <a href="/booking">Đăng ký dịch vụ →</a>
+          </article>
+        </div>
+      </div>
+    </section>
 
-    <section class="section-pad appointment" id="appointment"><div class="container appointment-grid"><div class="appointment-intro"><span class="eyebrow light"><span class="eyebrow-line"></span> Lịch hẹn của bạn</span><h2>Chủ động đặt lịch,<br /><em>an tâm thăm khám.</em></h2><p>Chọn thời gian thuận tiện. Chúng tôi sẽ gọi lại xác nhận trong vòng 15 phút trong giờ làm việc.</p><div class="appointment-benefit"><span>01</span><div><strong>Điền thông tin cơ bản</strong><small>Chỉ mất khoảng 1 phút</small></div></div><div class="appointment-benefit"><span>02</span><div><strong>Được điều phối phù hợp</strong><small>Đúng chuyên khoa, đúng bác sĩ</small></div></div><div class="appointment-benefit"><span>03</span><div><strong>Nhận xác nhận qua điện thoại</strong><small>Không cần chờ đợi lâu</small></div></div></div><div class="appointment-form-wrap"><form id="appointment-form" class="appointment-form"><div class="form-heading"><div><span class="mini-label">Đặt lịch trực tuyến</span><h3>Bắt đầu từ hôm nay</h3></div><span class="form-badge">Miễn phí</span></div><div class="form-row"><label>Họ và tên <input name="fullName" type="text" autocomplete="name" placeholder="Nguyễn Văn An" required /></label><label>Số điện thoại <input name="phone" type="tel" autocomplete="tel" placeholder="090 123 4567" pattern="[0-9+ ()-]{9,}" required /></label></div><div class="location-picker" data-location-picker><div class="location-picker-heading"><strong>Cơ sở khám</strong><a href="/locations">Xem bản đồ các điểm mẫu ↗</a></div><div class="location-picker-controls"><label>Chọn tỉnh/thành thủ công <select data-location-city aria-label="Chọn tỉnh thành để gợi ý cơ sở gần nhất"><option value="">Đang tải tỉnh/thành…</option></select></label><button class="location-gps-button" type="button" data-location-gps>◎ Dùng vị trí hiện tại</button></div><label>Chọn cơ sở <select name="locationId" data-location-select required disabled><option value="">Đang tải danh sách cơ sở…</option></select></label><div class="location-recommendation" data-location-recommendation role="status" aria-live="polite">Bạn có thể tự chọn tỉnh/thành. Chỉ khi bấm nút định vị, trình duyệt mới hỏi quyền GPS; tọa độ chỉ dùng trên thiết bị của bạn.</div><p class="location-sample-disclaimer">Các cơ sở hiện là dữ liệu minh họa, địa chỉ và hoạt động chưa được xác nhận.</p></div><div class="form-row"><label>Chuyên khoa <select name="specialty" required><option value="">Chọn chuyên khoa</option><option>Nội tổng quát</option><option>Tim mạch</option><option>Nhi khoa</option><option>Sản phụ khoa</option><option>Cơ xương khớp</option><option>Da liễu</option><option>Tai mũi họng</option><option>Mắt</option><option>Tiêu hóa</option><option>Thần kinh</option><option>Nội tiết</option><option>Răng hàm mặt</option><option>Hô hấp</option><option>Thận – tiết niệu</option></select></label><label>Bác sĩ mong muốn <select name="doctor" required><option value="">Chọn bác sĩ</option><option data-specialty="Nội tổng quát">BS. Nguyễn Minh An</option><option data-specialty="Nhi khoa">BS. Trần Hoài Thương</option><option data-specialty="Tim mạch">PGS.TS. Lê Quang Vũ</option><option data-specialty="Da liễu">BS. Phạm Hà Phương</option><option data-specialty="Cơ xương khớp">BS. Lê Minh Khoa</option><option data-specialty="Sản phụ khoa">BS. Nguyễn Bảo Ngọc</option><option data-specialty="Nội tổng quát">BS. Võ Thanh Hà</option><option data-specialty="Tim mạch">TS.BS. Đặng Quốc Bảo</option><option data-specialty="Nhi khoa">BS. Huỳnh Mai Anh</option><option data-specialty="Sản phụ khoa">BS. Ngô Thu Trang</option><option data-specialty="Tai mũi họng">BS. Bùi Anh Tuấn</option><option data-specialty="Mắt">BS. Lý Ngọc Diệp</option><option data-specialty="Tiêu hóa">PGS.TS. Hoàng Gia Khánh</option><option data-specialty="Thần kinh">BS. Đoàn Thế Hiển</option><option data-specialty="Nội tiết">TS.BS. Mai Thúy Vy</option><option data-specialty="Răng hàm mặt">BS. Phan Đức Long</option><option data-specialty="Hô hấp">BS. Trịnh Kim Oanh</option><option data-specialty="Thận – tiết niệu">BS. Cao Văn Đức</option></select></label></div><div class="form-row"><label>Ngày mong muốn <input name="date" type="date" required /></label><label>Khung giờ <select name="time" required><option value="">Chọn khung giờ</option><option>07:30 — 09:00</option><option>09:00 — 11:00</option><option>13:30 — 15:30</option><option>15:30 — 20:00</option></select></label></div><label>Ghi chú thêm <textarea name="note" rows="3" placeholder="Bạn muốn chia sẻ điều gì với chúng tôi?"></textarea></label><button class="button button-dark button-full" type="submit">Gửi yêu cầu đặt lịch <span>→</span></button><p class="form-note">Bằng việc gửi thông tin, bạn đồng ý để Lộc Khang liên hệ tư vấn về lịch hẹn.</p></form></div></div></section>
+    <section class="section section-dark" id="booking">
+      <div class="container booking-split">
+        <div class="booking-intro">
+          <span class="mini-label">LỊCH HẸN CỦA BẠN</span>
+          <h2>Chủ động đặt lịch,<br>an tâm thăm khám.</h2>
+          <p>Chọn thời gian thuận tiện. Chúng tôi sẽ gọi lại xác nhận trong vòng 15 phút trong giờ làm việc.</p>
+          <ol class="booking-steps">
+            <li><strong>Điền thông tin cơ bản</strong><span>Chỉ mất khoảng 1 phút</span></li>
+            <li><strong>Được điều phối phù hợp</strong><span>Đúng chuyên khoa, đúng bác sĩ</span></li>
+            <li><strong>Nhận xác nhận qua điện thoại</strong><span>Không cần chờ đợi lâu</span></li>
+          </ol>
+        </div>
 
-    <section class="section-pad doctors" id="doctors"><div class="container"><div class="section-heading"><div><span class="eyebrow"><span class="eyebrow-line"></span> Đội ngũ của chúng tôi</span><h2>Những người đặt<br /><em>trái tim vào nghề.</em></h2></div><a class="text-link" href="#appointment">Gặp bác sĩ phù hợp <span>↗</span></a></div><div class="doctor-grid"><article class="profile-card profile-one"><div class="profile-art"><span class="profile-initial">MA</span><span class="profile-shape"></span></div><div class="profile-meta"><div><span class="profile-specialty">Nội tổng quát</span><h3>BS. Nguyễn Minh An</h3></div><span class="profile-link">↗</span></div><p>Lịch khám: T2, T4, T6 · 08:00–16:00<br />12 năm kinh nghiệm · Bệnh viện Chợ Rẫy</p></article><article class="profile-card profile-two"><div class="profile-art"><span class="profile-initial">TH</span><span class="profile-shape"></span></div><div class="profile-meta"><div><span class="profile-specialty">Nhi khoa</span><h3>BS. Trần Hoài Thương</h3></div><span class="profile-link">↗</span></div><p>Lịch khám: T3, T5, T7 · 08:30–17:00<br />10 năm kinh nghiệm · Chuyên gia hô hấp nhi</p></article><article class="profile-card profile-three"><div class="profile-art"><span class="profile-initial">QV</span><span class="profile-shape"></span></div><div class="profile-meta"><div><span class="profile-specialty">Tim mạch</span><h3>PGS.TS. Lê Quang Vũ</h3></div><span class="profile-link">↗</span></div><p>Lịch khám: T2, T5 · 13:30–20:00<br />20 năm kinh nghiệm · Tim mạch can thiệp</p></article></div></div></section>
+        <form class="booking-card" id="appointment-form">
+          <div class="booking-card-head">
+            <div>
+              <span class="mini-label">ĐẶT LỊCH TRỰC TUYẾN</span>
+              <h3>Bắt đầu từ hôm nay</h3>
+            </div>
+            <span class="badge-pill">Miễn phí</span>
+          </div>
+          <div class="form-row">
+            <label>Họ và tên
+              <input name="fullName" type="text" placeholder="Nguyễn Văn An" required>
+            </label>
+            <label>Số điện thoại
+              <input name="phone" type="tel" placeholder="090 123 4567" required>
+            </label>
+          </div>
+          <fieldset class="location-box" data-location-picker>
+            <div class="location-box-head">
+              <strong>Cơ sở khám</strong>
+              <a href="/locations">Xem bản đồ các điểm mẫu ↗</a>
+            </div>
+            <div class="form-row">
+              <label>Chọn tỉnh/thành thủ công
+                <select data-province-select>
+                  <option value="">Chọn tỉnh/thành gần bạn</option>
+                </select>
+              </label>
+              <button type="button" class="ghost-button" data-use-gps>◎ Dùng vị trí hiện tại</button>
+            </div>
+            <label>Chọn cơ sở
+              <select name="locationId" data-location-select required>
+                <option value="">Chọn cơ sở khám</option>
+              </select>
+            </label>
+            <p class="location-hint" data-location-status>Bạn có thể tự chọn tỉnh/thành. Chỉ khi bấm nút định vị trình duyệt mới hỏi quyền GPS; tọa độ chỉ dùng trên thiết bị của bạn.</p>
+          </fieldset>
+          <div class="form-row">
+            <label>Chuyên khoa
+              <select name="specialty" required>
+                <option value="">Chọn chuyên khoa</option>
+              </select>
+            </label>
+            <label>Bác sĩ mong muốn
+              <select name="doctor" required>
+                <option value="">Chọn bác sĩ</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label>Ngày mong muốn
+              <input name="date" type="date" required>
+            </label>
+            <label>Khung giờ
+              <select name="time" required>
+                <option value="">Chọn khung giờ</option>
+                <option value="07:30 — 09:00">07:30 — 09:00</option>
+                <option value="09:00 — 11:00">09:00 — 11:00</option>
+                <option value="13:30 — 15:30">13:30 — 15:30</option>
+                <option value="15:30 — 20:00">15:30 — 20:00</option>
+              </select>
+            </label>
+          </div>
+          <label>Ghi chú thêm
+            <textarea name="note" rows="3" placeholder="Bạn muốn chia sẻ điều gì với chúng tôi?"></textarea>
+          </label>
+          <button type="submit" class="button button-primary" style="width:100%;justify-content:center;">
+            Gửi yêu cầu đặt lịch <span aria-hidden="true">→</span>
+          </button>
+        </form>
+      </div>
+    </section>
 
-    <section class="quote-section"><div class="container quote-grid"><div class="quote-mark">“</div><blockquote>Điều chúng tôi mong muốn không chỉ là chữa một căn bệnh, mà là giúp mỗi người hiểu hơn về cơ thể mình để sống khỏe và chủ động hơn.</blockquote><div class="quote-author"><span class="author-line"></span><span><strong>BS. Nguyễn Minh An</strong><small>Giám đốc chuyên môn Lộc Khang Clinic</small></span></div></div></section>
+    <section class="section" id="doctors">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="mini-label">ĐỘI NGŨ CỦA CHÚNG TÔI</span>
+            <h2>Những người đặt<br>trái tim vào nghề.</h2>
+          </div>
+          <a class="text-link" href="/doctors">Gặp bác sĩ phù hợp ↗</a>
+        </div>
+        <div class="doctor-grid">
+          <article class="doctor-card">
+            <div class="doctor-avatar mint">MA</div>
+            <div class="doctor-info">
+              <span class="mini-label">NỘI TỔNG QUÁT</span>
+              <h3>BS. Nguyễn Minh An</h3>
+              <p>Lịch khám: T2, T4, T6 · 08:00–16:00<br>12 năm kinh nghiệm · Bệnh viện Chợ Rẫy</p>
+            </div>
+          </article>
+          <article class="doctor-card">
+            <div class="doctor-avatar peach">TH</div>
+            <div class="doctor-info">
+              <span class="mini-label">NHI KHOA</span>
+              <h3>BS. Trần Hoài Thương</h3>
+              <p>Lịch khám: T3, T5, T7 · 08:30–17:00<br>10 năm kinh nghiệm · Chuyên gia hô hấp nhi</p>
+            </div>
+          </article>
+          <article class="doctor-card">
+            <div class="doctor-avatar lavender">QV</div>
+            <div class="doctor-info">
+              <span class="mini-label">TIM MẠCH</span>
+              <h3>PGS.TS. Lê Quang Vũ</h3>
+              <p>Lịch khám: T2, T5 · 13:30–20:00<br>20 năm kinh nghiệm · Tim mạch can thiệp</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-    <section class="section-pad articles" id="articles"><div class="container"><div class="section-heading"><div><span class="eyebrow"><span class="eyebrow-line"></span> Góc sức khỏe</span><h2>Hiểu đúng để<br /><em>sống khỏe hơn.</em></h2></div><a class="text-link" href="#articles">Xem tất cả bài viết <span>↗</span></a></div><div class="article-grid"><article class="article-card article-feature"><div class="article-visual visual-lime"><span class="article-label">Sống chủ động</span><div class="article-sun"></div><span class="article-leaf leaf-a"></span><span class="article-leaf leaf-b"></span><span class="article-visual-word">well<br />being</span></div><div class="article-copy"><span class="article-category">Dinh dưỡng · 6 phút đọc</span><h3>Ăn thế nào để cơ thể luôn có đủ năng lượng?</h3><a class="text-link" href="#articles">Đọc bài viết <span>↗</span></a></div></article><article class="article-card"><div class="article-visual visual-sand"><span class="article-label">Kiến thức</span><div class="article-orbit"></div><span class="article-visual-word">rest<br />well</span></div><div class="article-copy"><span class="article-category">Giấc ngủ · 4 phút đọc</span><h3>5 dấu hiệu cơ thể đang cần một giấc ngủ chất lượng</h3><a class="text-link" href="#articles">Đọc bài viết <span>↗</span></a></div></article><article class="article-card"><div class="article-visual visual-blue"><span class="article-label">Phòng bệnh</span><div class="article-cross">+</div><span class="article-visual-word">move<br />more</span></div><div class="article-copy"><span class="article-category">Vận động · 5 phút đọc</span><h3>Vì sao 30 phút vận động mỗi ngày tạo khác biệt?</h3><a class="text-link" href="#articles">Đọc bài viết <span>↗</span></a></div></article></div></div></section>
-
-    <section class="contact-section" id="contact"><div class="container contact-grid"><div><span class="eyebrow light"><span class="eyebrow-line"></span> Lộc Khang Clinic</span><h2>Một cuộc gọi,<br /><em>một khởi đầu nhẹ nhàng.</em></h2><p>Đội ngũ tư vấn luôn sẵn sàng lắng nghe và giúp bạn chọn bước chăm sóc phù hợp nhất.</p><div class="contact-actions"><a class="button button-light" href="tel:19006868">Gọi 1900 6868 <span>→</span></a><a class="contact-email" href="mailto:hello@lockhang.clinic">hello@lockhang.clinic</a></div></div><div class="contact-info"><div class="contact-item"><span class="contact-symbol">⌖</span><div><small>Địa chỉ</small><strong>Các vị trí minh họa trên toàn quốc.<br />Địa chỉ chi nhánh chưa được xác nhận.</strong><a href="/locations">Xem danh sách và bản đồ <span>↗</span></a></div></div><div class="contact-item"><span class="contact-symbol">◷</span><div><small>Giờ làm việc</small><strong>Thứ 2 — Thứ 7: 07:30 — 20:00<br />Chủ nhật: 08:00 — 17:00</strong></div></div><form class="contact-form" id="contact-form"><span class="contact-form-title">Gửi yêu cầu tư vấn</span><div class="form-row"><input name="contactName" type="text" placeholder="Họ và tên" aria-label="Họ và tên" required /><input name="contactPhone" type="tel" placeholder="Số điện thoại" aria-label="Số điện thoại" pattern="[0-9+ ()-]{9,}" required /></div><div class="contact-form-bottom"><input name="contactMessage" type="text" placeholder="Bạn cần chúng tôi hỗ trợ điều gì?" aria-label="Nội dung cần tư vấn" required /><button type="submit" aria-label="Gửi yêu cầu tư vấn">→</button></div></form></div></div></section>
+    <section class="section section-soft" id="blog">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="mini-label">GÓC SỨC KHỎE</span>
+            <h2>Hiểu đúng để<br>sống khỏe hơn.</h2>
+          </div>
+          <a class="text-link" href="/diseases">Xem tất cả bài viết ↗</a>
+        </div>
+        <div class="blog-grid">
+          <article class="blog-card">
+            <span class="mini-label">DINH DƯỠNG · 8 PHÚT ĐỌC</span>
+            <h3>Ăn thế nào để cơ thể luôn có đủ năng lượng?</h3>
+            <a href="/diseases">Đọc bài viết ↗</a>
+          </article>
+          <article class="blog-card">
+            <span class="mini-label">GIẤC NGỦ · 4 PHÚT ĐỌC</span>
+            <h3>5 dấu hiệu cơ thể đang cần một giấc ngủ chất lượng</h3>
+            <a href="/diseases">Đọc bài viết ↗</a>
+          </article>
+          <article class="blog-card">
+            <span class="mini-label">VẬN ĐỘNG · 5 PHÚT ĐỌC</span>
+            <h3>Vì sao 30 phút vận động mỗi ngày tạo khác biệt?</h3>
+            <a href="/diseases">Đọc bài viết ↗</a>
+          </article>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <footer class="site-footer"><div class="container footer-top"><a class="brand brand-footer" href="#top"><span class="brand-mark" aria-hidden="true"><span></span><i></i></span><span><strong>Lộc Khang</strong><small>CLINIC</small></span></a><div class="footer-nav"><a href="#specialties">Chuyên khoa</a><a href="/doctors">Đội ngũ</a><a href="/locations">Cơ sở mẫu</a><a href="#services">Dịch vụ</a><a href="/diseases">Tra cứu bệnh lý</a><a href="/login">Cổng người bệnh</a><a href="/admin">Admin</a></div><div class="footer-social"><a href="#contact" aria-label="Facebook">f</a><a href="#contact" aria-label="Instagram">ig</a><a href="#contact" aria-label="Zalo">z</a></div></div><div class="container footer-bottom"><span>© 2026 Lộc Khang Clinic. All rights reserved.</span><span>Chính sách bảo mật · Điều khoản sử dụng</span></div></footer>
+  <footer class="site-footer" id="contact">
+    <div class="container footer-top">
+      <div class="footer-cta">
+        <span class="mini-label">LỘC KHANG CLINIC</span>
+        <h2>Một cuộc gọi,<br>một khởi đầu nhẹ nhàng.</h2>
+        <p>Đội ngũ tư vấn luôn sẵn sàng lắng nghe và giúp bạn chọn bước chăm sóc phù hợp nhất.</p>
+        <div class="footer-cta-actions">
+          <a class="button button-accent" href="tel:19006868">Gọi 1900 6868 →</a>
+          <a href="mailto:hello@lockhang.clinic">hello@lockhang.clinic</a>
+        </div>
+      </div>
+      <div class="footer-contact">
+        <div class="contact-meta">
+          <div>
+            <span class="mini-label">ĐỊA CHỈ</span>
+            <p>Các vị trí minh họa trên toàn quốc. Địa chỉ chi nhánh chưa được xác nhận.<br><a href="/locations">Xem danh sách và bản đồ ↗</a></p>
+          </div>
+          <div>
+            <span class="mini-label">GIỜ LÀM VIỆC</span>
+            <p>Thứ 2 — Thứ 7: 07:30 — 20:00<br>Chủ nhật: 08:00 — 17:00</p>
+          </div>
+        </div>
+        <form id="contact-form" class="contact-form">
+          <span class="mini-label">GỬI YÊU CẦU TƯ VẤN</span>
+          <div class="form-row">
+            <input name="fullName" type="text" placeholder="Họ và tên" required>
+            <input name="phone" type="tel" placeholder="Số điện thoại" required>
+          </div>
+          <div class="contact-submit-row">
+            <input name="message" type="text" placeholder="Bạn cần chúng tôi hỗ trợ điều gì?" required>
+            <button type="submit" class="button button-accent" aria-label="Gửi yêu cầu tư vấn">→</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-  <div class="modal" id="service-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-backdrop" data-close-modal></div><div class="modal-card"><button class="modal-close" type="button" aria-label="Đóng" data-close-modal>×</button><span class="mini-label">Dịch vụ Lộc Khang</span><h2 id="modal-title">Khám chuyên khoa</h2><p id="modal-content"></p><a class="button button-primary" href="#appointment" data-close-modal>Đặt lịch dịch vụ này <span>→</span></a></div></div>
-  <div class="toast" id="toast" role="status"><span class="toast-icon">✓</span><div><strong>Đã nhận yêu cầu</strong><span>Điều phối viên sẽ gọi lại cho bạn sớm.</span></div><button type="button" aria-label="Đóng thông báo">×</button></div>
-  <script src="/script.js"></script>
-  <script src="/location-utils.js"></script>
-  <script src="/locations.js"></script>
-  <script src="/doctor-filter.js"></script>
+    <div class="container footer-nav-bar">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">✚</span>
+        <span class="brand-text">
+          <strong>Lộc Khang</strong>
+          <small>CLINIC</small>
+        </span>
+      </a>
+      <nav class="footer-links" aria-label="Liên kết chân trang">
+        <a href="#specialties">Chuyên khoa</a>
+        <a href="/doctors">Đội ngũ</a>
+        <a href="/locations">Cơ sở mẫu</a>
+        <a href="#services">Dịch vụ</a>
+        <a href="/diseases">Tra cứu bệnh lý</a>
+        <a href="/login">Cổng người bệnh</a>
+        <!-- Cổng bác sĩ -->
+        <a href="/doctor-login">Cổng bác sĩ</a>
+        <a href="/admin-login">Admin</a>
+      </nav>
+    </div>
+
+    <div class="container footer-bottom">
+      <span>© 2026 Lộc Khang Clinic. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="#contact">Chính sách bảo mật</a>
+        <a href="#contact">Điều khoản sử dụng</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/location-utils.js?v=3" defer></script>
+  <script src="/locations.js?v=3" defer></script>
+  <script src="/doctor-filter.js?v=3" defer></script>
+  <script src="/app.js?v=3" defer></script>
 </body>
 </html>
